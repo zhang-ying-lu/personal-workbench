@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的变美计划</title>
+  <link rel="stylesheet" href="styles.css?v=20260804f" />
+  <link rel="stylesheet" href="pet.css?v=20260803x" />
+</head>
+<body>
+  <!-- 整张工作台背景：天使油画 + 奶白柔光罩 -->
+  <div class="bg-photo" aria-hidden="true"></div>
+  <div class="bg-scrim" aria-hidden="true"></div>
+  <div class="app">
+    <!-- 左侧纵向导航栏 -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <!-- 欧式小天使 cherub：羽翼 + 卷发圆脸 + 小袍 + 腮红 -->
+            <path d="M11 10.2 C6.8 6.2 2.6 5.6 0.5 8.2 C2.1 8.4 2.9 9.4 2.8 10.7 C4.4 9.8 5.5 10.7 5.6 12.1 C7.1 11.2 8.4 11.9 8.6 13.3 C10 12.4 11.2 12.9 12 13.8Z" fill="#fff6da"/>
+            <path d="M13 10.2 C17.2 6.2 21.4 5.6 23.5 8.2 C21.9 8.4 21.1 9.4 21.2 10.7 C19.6 9.8 18.5 10.7 18.4 12.1 C16.9 11.2 15.6 11.9 15.4 13.3 C14 12.4 12.8 12.9 12 13.8Z" fill="#fff6da"/>
+            <path d="M5.6 8.4 C4 8.2 2.6 8.6 1.6 9.6" stroke="#e9c873" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+            <path d="M8 10.2 C6.6 10 5.4 10.5 4.5 11.3" stroke="#e9c873" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+            <path d="M18.4 8.4 C20 8.2 21.4 8.6 22.4 9.6" stroke="#e9c873" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+            <path d="M16 10.2 C17.4 10 18.6 10.5 19.5 11.3" stroke="#e9c873" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+            <path d="M12 13.8 C10.4 14 9.6 16.5 10.2 19 C11 17.8 13 17.8 13.8 19 C14.4 16.5 13.6 14 12 13.8Z" fill="#fbe6a6"/>
+            <circle cx="12" cy="11" r="3.1" fill="#fff3e0"/>
+            <circle cx="9.7" cy="8.4" r="1" fill="#f0d9a8"/>
+            <circle cx="12" cy="7.7" r="1.05" fill="#f0d9a8"/>
+            <circle cx="14.3" cy="8.4" r="1" fill="#f0d9a8"/>
+            <circle cx="10.2" cy="11.6" r="0.5" fill="#e7a9b3"/>
+            <circle cx="13.8" cy="11.6" r="0.5" fill="#e7a9b3"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">变美计划</span>
+          <span class="brand-sub" id="brandDate">2026</span>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-target="calendar">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="11" r="8.5"/><path d="M12 11 L16 4"/><path d="M12 3 V4.4 M20 11 H18.4 M12 19 V17.4 M4 11 H5.6"/><path d="M8 19.5 L6.5 22 H17.5 L16 19.5"/><text x="12" y="7.6" font-size="2.6" text-anchor="middle">XII</text><text x="17.6" y="12" font-size="2.6" text-anchor="middle">III</text><text x="12" y="15.8" font-size="2.6" text-anchor="middle">VI</text><text x="6.4" y="12" font-size="2.6" text-anchor="middle">IX</text></svg></span><span class="nav-label">2026年历</span>
+        </button>
+        <button class="nav-item" data-target="analysis">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 12 L12 3 A9 9 0 0 1 21 12 Z"/><path d="M12 3 V12 H21"/></svg></span><span class="nav-label">个人分析</span>
+        </button>
+        <button class="nav-item" data-target="resources">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6 C5 3.6 8 3.6 8 6"/><circle cx="5" cy="5.2" r="0.85"/><circle cx="8" cy="5.2" r="0.85"/><path d="M16 6 C16 3.6 19 3.6 19 6"/><circle cx="16" cy="5.2" r="0.85"/><circle cx="19" cy="5.2" r="0.85"/><rect x="4.5" y="6.5" width="15" height="14.5" rx="1"/><path d="M4.5 11.5 H19.5 M4.5 16.5 H19.5"/><path d="M6.5 9.5 V11.5 M8.5 9.5 V11.5 M11 9.5 V11.5 M14 9.5 V11.5 M16.5 9.5 V11.5 M18.5 9.5 V11.5"/><path d="M6.5 14.5 V16.5 M9 14.5 V16.5 M12 14.5 V16.5 M15 14.5 V16.5 M18 14.5 V16.5"/></svg></span><span class="nav-label">资源库</span>
+        </button>
+        <button class="nav-item" data-target="weekly">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21 H21"/><path d="M3 21 V13 M6 21 V9 M9 21 V15 M12 21 V6.5 M15 21 V12 M18 21 V9.5 M21 21 V16" stroke-width="1.4"/></svg></span><span class="nav-label">周计划</span>
+        </button>
+        <button class="nav-item" data-target="daily">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5 V5 M12 19 V21.5 M2.5 12 H5 M19 12 H21.5 M5 5 L6.8 6.8 M18.2 18.2 L20 20 M19 5 L17.2 6.8 M6.8 17.2 L5 19"/></svg></span><span class="nav-label">日计划</span>
+        </button>
+        <button class="nav-item" data-target="emotion">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21 C6 21 3 17 3 12 C3 7 7 4 12 4 C17 4 21 7 21 12 C21 15.5 19 18 16.5 18.5 C15.8 18.6 15.2 18.2 15.2 17.5 C15.2 16.9 15.6 16.6 16 16.5 C17.6 16 18.5 14.4 18.5 12.5 C18.5 9 15.8 7 12 7 C8.2 7 5.5 9 5.5 12.5 C5.5 16 7.8 18.5 11 18.5 C11.6 18.5 12 19 12 19.5 C12 20.2 11.6 21 12 21 Z"/></svg></span><span class="nav-label">情绪盒子</span>
+        </button>
+        <button class="nav-item" data-target="hundred">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 L7.5 21 L12 18.8 L16.5 21 L15 14"/><circle cx="12" cy="9" r="6"/><path d="M12 5.5 L13.1 7.8 L15.6 7.9 L13.6 9.5 L14.3 12 L12 10.5 L9.7 12 L10.4 9.5 L8.4 7.9 L10.9 7.8 Z"/></svg></span><span class="nav-label">100天总结</span>
+        </button>
+        <button class="nav-item" data-target="pet">
+          <span class="nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M7 6 L5.5 2 L9 5 Z"/><path d="M17 6 L18.5 2 L15 5 Z"/><circle cx="9.5" cy="12.5" r="1.3" fill="#fff"/><circle cx="14.5" cy="12.5" r="1.3" fill="#fff"/></svg></span><span class="nav-label">宠物之家</span>
+        </button>
+      </nav>
+      <div class="sidebar-foot">
+        <button id="exportBtn" class="ghost-btn" title="导出全部数据为 JSON">⬇ 导出数据</button>
+        <button id="importBtn" class="ghost-btn" title="从 JSON 导入数据">⬆ 导入数据</button>
+        <input type="file" id="importFile" accept="application/json" hidden />
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main">
+      <!-- 1. 2026年历 -->
+      <section class="view active" id="view-calendar">
+        <header class="view-head">
+          <h1>2026 年历</h1>
+          <p class="view-desc">全年十二个月一览，高亮显示今天。点击任意日期可快速跳转「日计划」。</p>
+        </header>
+        <div class="cal-toolbar">
+          <div class="cal-info">
+            <span class="cal-info-label">100 天打卡区间</span>
+            <span id="calCheckinInfo" class="cal-info-value">未设定起始日</span>
+          </div>
+          <div class="cal-info">
+            <span class="cal-info-label">🩸 预计下次经期</span>
+            <span id="calPeriodInfo" class="cal-info-value">未设定</span>
+            <label class="cal-interval" title="手动设置平均周期（两次经期之间的间隔天数）">间隔
+              <input type="number" id="pInterval" class="inp mini interval-inp" min="15" max="90" step="1" /> 天
+            </label>
+          </div>
+          <div class="cal-actions">
+            <button class="ghost-btn" id="calPickMode" type="button">✎ 设定打卡起点</button>
+            <button class="ghost-btn period-btn" id="calPeriodMode" type="button">🩸 标记经期</button>
+          </div>
+        </div>
+        <div id="calPickHint" class="cal-pick-hint" hidden>请点击年历中的任意一天，将其设为 100 天打卡的起始日（含当日）。</div>
+        <div id="calPeriodHint" class="cal-pick-hint period-hint" hidden>请依次点击：① 经期开始日 → ② 经期结束日。可重复标记多次；点击已有经期区间可删除该次记录。</div>
+        <div id="calPeriodAlert" class="cal-period-alert" hidden></div>
+        <div class="cal-legend">
+          <span class="legend-item"><span class="legend-swatch today"></span>今天</span>
+          <span class="legend-item"><span class="legend-swatch checkin"></span>100 天打卡区间</span>
+          <span class="legend-item"><span class="legend-swatch task"></span>有日计划</span>
+          <span class="legend-item"><span class="legend-swatch start"></span>打卡起始日</span>
+          <span class="legend-item"><span class="legend-swatch holi">*</span>法定节假日</span>
+          <span class="legend-item"><span class="legend-swatch period"></span>经期</span>
+          <span class="legend-item"><span class="legend-swatch period-pred"></span>预计经期</span>
+          <span class="legend-item"><span class="legend-swatch period-remind"></span>提醒日</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+
+      <!-- 2. 个人分析 -->
+      <section class="view" id="view-analysis">
+        <header class="view-head">
+          <h1>个人分析</h1>
+        </header>
+
+        <div class="part-label">大框架分析</div>
+
+        <div class="body-panel">
+          <!-- 左侧：明星 / 网红参考照 -->
+          <aside class="star-pane">
+            <div class="star-head">明星 / 网红参考</div>
+            <div class="photo-box" id="starBox">
+              <img id="starPhoto" alt="参考照" />
+              <div class="photo-empty" id="starEmpty">
+                <div class="photo-empty-ico">⭐</div>
+                <p>选择或添加一张喜欢的明星 / 网红照片作参考</p>
+                <span class="photo-tip">本地保存，仅用于你自己的参考对比</span>
+              </div>
+            </div>
+            <div class="photo-actions">
+              <button class="primary-btn" id="starAddBtn" type="button">+ 添加参考照</button>
+            </div>
+            <div class="star-list" id="starList"></div>
+            <input type="file" id="starInput" accept="image/*" hidden />
+          </aside>
+
+          <!-- 数据区（右侧；全身照置于区块一框内） -->
+          <div class="data-pane">
+            <!-- 区块一 -->
+            <section class="block" id="blk-basic">
+              <h2 class="block-title">一、基础身体数据</h2>
+              <!-- 全身照（置于区块一框内） -->
+              <aside class="photo-pane">
+                <div class="photo-box" id="photoBox">
+                  <canvas class="measure-canvas" id="measureCanvas"></canvas>
+                  <img id="bodyPhoto" alt="全身站立照" />
+                  <div class="photo-empty" id="photoEmpty">
+                    <div class="photo-empty-ico">📷</div>
+                    <p>点击或拖拽上传一张清晰全身站立照</p>
+                    <span class="photo-tip">支持 JPG / PNG / WEBP，仅用于本地计算</span>
+                  </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" hidden />
+                <div class="photo-actions">
+                  <button class="primary-btn" id="photoUploadBtn" type="button">上传 / 更换照片</button>
+                  <button class="ghost-btn" id="photoClearBtn" type="button" hidden>移除照片</button>
+                </div>
+                <div class="measure-hint" id="measureHint" hidden></div>
+              </aside>
+              <div class="field"><label>身高</label><div class="ctl"><input type="number" id="bHeight" class="inp num" min="0" step="0.1" placeholder="—" /><span class="unit">cm</span></div></div>
+              <div class="field"><label>体重</label><div class="ctl"><input type="number" id="bWeight" class="inp num" min="0" step="0.1" placeholder="—" /><span class="unit">kg</span></div></div>
+              <div class="field"><label>BMI</label><div class="ctl"><span class="readonly" id="bBMI">—</span><span class="unit">kg/m²</span><span class="bmi-tag" id="bmiTag"></span></div></div>
+              <div class="field"><label>骨架量感</label><div class="ctl seg single" id="bFrame">
+                <button type="button" data-v="大">大</button>
+                <button type="button" data-v="中">中</button>
+                <button type="button" data-v="小">小</button>
+              </div></div>
+            </section>
+
+            <!-- 区块二 -->
+            <section class="block" id="blk-ratio">
+              <h2 class="block-title">二、比例数据</h2>
+              <p class="block-note">上传照片并填写身高后，点「重新计算」在照片上依次点选关键点即可自动得出比例；也可直接在右侧手动输入。</p>
+              <div class="field"><label>头身比</label><div class="ctl"><input type="number" id="bHbr" class="inp num" min="0" step="0.1" placeholder="如 7.5" /><span class="unit">头身</span><button class="ghost-btn sm" type="button" data-meas="hb">重新计算</button></div></div>
+              <div class="field"><label>头肩比</label><div class="ctl"><input type="number" id="bHsr" class="inp num" min="0" step="0.1" placeholder="如 2.6" /><span class="unit">头肩</span><button class="ghost-btn sm" type="button" data-meas="hs">重新计算</button></div></div>
+              <div class="field"><label>胸围</label><div class="ctl"><input type="number" id="bBust" class="inp num" min="0" step="0.1" placeholder="—" /><span class="unit">cm</span></div></div>
+              <div class="field"><label>腰围</label><div class="ctl"><input type="number" id="bWaist" class="inp num" min="0" step="0.1" placeholder="—" /><span class="unit">cm</span></div></div>
+              <div class="field"><label>臀围</label><div class="ctl"><input type="number" id="bHip" class="inp num" min="0" step="0.1" placeholder="—" /><span class="unit">cm</span></div></div>
+              <div class="field"><label>腰臀比</label><div class="ctl"><span class="readonly" id="bWhr">—</span><span class="unit">腰/臀</span></div></div>
+            </section>
+
+            <!-- 区块三 -->
+            <section class="block" id="blk-shape">
+              <h2 class="block-title">三、体型与身材特征</h2>
+              <div class="field"><label>体型</label><div class="ctl seg single" id="bBodyType">
+                <button type="button" data-v="沙漏型">沙漏型</button>
+                <button type="button" data-v="梨型">梨型</button>
+                <button type="button" data-v="H型">H型</button>
+                <button type="button" data-v="苹果型">苹果型</button>
+                <button type="button" data-v="倒三角型">倒三角型</button>
+              </div></div>
+              <div class="field col"><label>身材特征<small>（可多选）</small></label><div class="chk-group" id="bFeatures"></div></div>
+            </section>
+
+            <!-- 区块四 -->
+            <section class="block" id="blk-hair">
+              <h2 class="block-title">四、发量与发质</h2>
+              <div class="field"><label>发量</label><div class="ctl seg single" id="bHairVol">
+                <button type="button" data-v="浓密">浓密</button>
+                <button type="button" data-v="适中">适中</button>
+                <button type="button" data-v="偏少">偏少</button>
+                <button type="button" data-v="稀疏">稀疏</button>
+              </div></div>
+              <div class="field col"><label>发质<small>（可多选）</small></label><div class="chk-group" id="bHairTex"></div></div>
+            </section>
+
+            <!-- 区块五 -->
+            <section class="block" id="blk-skin">
+              <h2 class="block-title">五、肤色</h2>
+              <div class="field col"><label>肤色<small>（以「浅」为起点单选）</small></label><div class="skin-group" id="bSkin"></div></div>
+            </section>
+
+            <!-- 第二大部分：小框架分析 -->
+            <div class="part-label">小框架分析</div>
+
+            <!-- 区块六 -->
+            <section class="block" id="blk-frontface">
+              <h2 class="block-title">六、正面分析</h2>
+              <p class="block-note">上传正面清晰照片后自动生成可拖动的九宫格构图参考线（辅助构图 / 切割，每条线都能用鼠标拖动调整）；点「开始分析」还可标注面部关键点校准。</p>
+
+              <!-- 分析专用照片 + 关键点画布 -->
+              <div class="ff-photo-wrap">
+                <div class="ff-stage" id="ffStage">
+                  <div class="photo-box ff-box" id="ffBox">
+                    <img id="ffPhoto" alt="正面分析照" />
+                    <canvas id="ffCanvas"></canvas>
+                    <div class="photo-empty" id="ffEmpty">
+                      <div class="photo-empty-ico">📷</div>
+                      <p>点击或拖拽上传一张正面清晰照片</p>
+                      <span class="photo-tip">用于面部关键点分析与指标计算</span>
+                    </div>
+                  </div>
+                </div>
+                <input type="file" id="ffInput" accept="image/*" hidden />
+                <div class="photo-actions">
+                  <button class="primary-btn sm" id="ffUploadBtn" type="button">上传 / 更换照片</button>
+                  <button class="ghost-btn sm" id="ffClearBtn" type="button" hidden>移除照片</button>
+                </div>
+                <div class="ff-zoom" id="ffZoomBar" hidden>
+                  <span class="ff-zoom-label">照片缩放</span>
+                  <button class="ff-zoom-btn" id="ffZoomOut" type="button" title="缩小">−</button>
+                  <input type="range" id="ffZoomRange" min="50" max="300" step="5" value="100" />
+                  <span class="ff-zoom-val" id="ffZoomVal">100%</span>
+                  <button class="ff-zoom-btn" id="ffZoomIn" type="button" title="放大">+</button>
+                  <button class="ghost-btn sm" id="ffZoomReset" type="button">重置</button>
+                </div>
+              </div>
+
+              <!-- 分析控制区（上传照片后出现） -->
+              <div id="ffAnalyzeArea" hidden>
+                <div class="ff-actions">
+                  <button class="primary-btn sm" id="ffStartBtn" type="button">开始分析</button>
+                  <button class="ghost-btn sm" id="ffRerunBtn" type="button" hidden>重新识别</button>
+                  <button class="primary-btn sm" id="ffConfirmBtn" type="button" hidden>确认分析</button>
+                </div>
+                <div class="ff-tools" id="ffTools">
+                  <button class="ghost-btn sm" id="ffToggleThree" type="button">三庭五眼辅助线</button>
+                </div>
+                <p class="ff-hint" id="ffHint">提示：上方在<b>框内</b>缩放照片（按钮或滑块放大后，拖动空白处可平移查看不同区域）。上传照片后点「开始分析」查看<b>三庭五眼</b>比例辅助线；<b>每根线都可拖动</b>——四根横线（发际线 / 眉心 / 鼻底 / 下巴）上下移定三庭分界；<b>六根竖线都可左右移</b>：最外侧两根是左 / 右脸缘（定五眼总脸宽），中间四根五眼线可分别拖到你想对齐的位置，五眼比例数值会实时同步更新。</p>
+                <div class="ff-legend" id="ffLegend" hidden></div>
+              </div>
+
+              <!-- 指标录入：始终可见，可手动选择 / 填写，也可上传照片后点「开始分析」自动计算 -->
+              <div class="ff-results ff-metrics">
+                <div class="ff-results-head">
+                  <span class="ff-results-title">面部分析指标</span>
+                  <span class="ff-results-sub">可手动选择 / 填写，或上传照片后点「开始分析」自动计算</span>
+                </div>
+                <div class="field"><label>颅顶</label><div class="ctl seg single" id="ffCrown">
+                  <button type="button" data-v="高颅顶">高颅顶</button>
+                  <button type="button" data-v="低颅顶">低颅顶</button>
+                </div></div>
+                <div class="field"><label>脸型<small>（可多选，最多 2 项）</small></label><div class="ctl seg multi" id="ffFaceShape">
+                  <button type="button" data-v="圆">圆</button>
+                  <button type="button" data-v="方">方</button>
+                  <span class="seg-break"></span>
+                  <button type="button" data-v="短">短</button>
+                  <button type="button" data-v="长">长</button>
+                </div></div>
+
+                <div class="field"><label>三庭比例</label><div class="ctl"><span class="readonly" id="ffThree">—</span><span class="unit">上:中:下</span></div></div>
+                <div class="field col"><label>三庭（手动 cm，留空则用照片计算）</label><div class="ctl">
+                  <input class="inp num" id="ffUpper" type="number" min="0" step="0.1" placeholder="上庭" /><span class="unit">cm</span>
+                  <input class="inp num" id="ffMid" type="number" min="0" step="0.1" placeholder="中庭" /><span class="unit">cm</span>
+                  <input class="inp num" id="ffLower" type="number" min="0" step="0.1" placeholder="下庭" /><span class="unit">cm</span>
+                </div></div>
+
+                <div class="field"><label>五眼比例</label><div class="ctl"><span class="readonly" id="ffFive">—</span></div></div>
+                <div class="field col"><label>五眼分段（手动 cm，留空则用照片计算）</label><div class="ctl five-inputs">
+                  <input class="inp num" id="ffSeg1" type="number" min="0" step="0.1" placeholder="左缘-左外" />
+                  <input class="inp num" id="ffSeg2" type="number" min="0" step="0.1" placeholder="左眼宽" />
+                  <input class="inp num" id="ffSeg3" type="number" min="0" step="0.1" placeholder="眼距" />
+                  <input class="inp num" id="ffSeg4" type="number" min="0" step="0.1" placeholder="右眼宽" />
+                  <input class="inp num" id="ffSeg5" type="number" min="0" step="0.1" placeholder="右外-右缘" />
+                </div></div>
+
+                <div class="field"><label>眼型</label><div class="ctl seg single" id="ffEyeShape">
+                  <button type="button" data-v="圆眼">圆眼</button>
+                  <button type="button" data-v="细长眼">细长眼</button>
+                </div></div>
+                <div class="field"><label>眉眼间距</label><div class="ctl seg single" id="ffBrowEye">
+                  <button type="button" data-v="宽">宽</button>
+                  <button type="button" data-v="适中">适中</button>
+                  <button type="button" data-v="近">近</button>
+                </div></div>
+                <div class="field"><label>眼距</label><div class="ctl seg single" id="ffEyeDist">
+                  <button type="button" data-v="偏宽">偏宽</button>
+                  <button type="button" data-v="正常">正常</button>
+                  <button type="button" data-v="偏窄">偏窄</button>
+                </div></div>
+                <div class="field"><label>鼻翼宽度</label><div class="ctl seg single" id="ffNoseWidth">
+                  <button type="button" data-v="偏宽">偏宽</button>
+                  <button type="button" data-v="标准">标准</button>
+                  <button type="button" data-v="偏窄">偏窄</button>
+                </div></div>
+                <div class="field"><label>人中长度</label><div class="ctl seg single" id="ffPhiltrum">
+                  <button type="button" data-v="偏长">偏长</button>
+                  <button type="button" data-v="适中">适中</button>
+                  <button type="button" data-v="偏短">偏短</button>
+                </div></div>
+                <div class="field"><label>下颌宽度</label><div class="ctl seg single" id="ffJaw">
+                  <button type="button" data-v="偏宽">偏宽</button>
+                  <button type="button" data-v="偏窄">偏窄</button>
+                </div></div>
+              </div>
+            </section>
+
+            <!-- 区块七 -->
+            <section class="block" id="blk-sideface">
+              <h2 class="block-title">七、侧面分析</h2>
+              <p class="block-note">上传一张纯侧面（90°）清晰照片，系统按侧颜标准自动标注关键点；可拖拽校准后点「确认分析」自动判定侧面型。</p>
+
+              <!-- 分析专用照片 + 关键点画布 -->
+              <div class="ff-photo-wrap">
+                <div class="photo-box ff-box" id="sfBox">
+                  <img id="sfPhoto" alt="侧面分析照" />
+                  <canvas id="sfCanvas"></canvas>
+                  <div class="photo-empty" id="sfEmpty">
+                    <div class="photo-empty-ico">📷</div>
+                    <p>点击或拖拽上传一张纯侧面照</p>
+                    <span class="photo-tip">90° 纯侧面，用于侧面关键点与角度分析</span>
+                  </div>
+                </div>
+                <input type="file" id="sfInput" accept="image/*" hidden />
+                <div class="photo-actions">
+                  <button class="primary-btn sm" id="sfUploadBtn" type="button">上传 / 更换照片</button>
+                  <button class="ghost-btn sm" id="sfClearBtn" type="button" hidden>移除照片</button>
+                </div>
+              </div>
+
+              <!-- 分析控制区（上传照片后出现） -->
+              <div id="sfAnalyzeArea" hidden>
+                <div class="ff-actions">
+                  <button class="primary-btn sm" id="sfStartBtn" type="button">开始分析</button>
+                  <button class="ghost-btn sm" id="sfRerunBtn" type="button" hidden>重新识别</button>
+                  <button class="primary-btn sm" id="sfConfirmBtn" type="button" hidden>确认分析</button>
+                </div>
+                <div class="ff-tools" id="sfTools">
+                  <button class="ghost-btn sm active" id="sfTogglePoints" type="button">关键点标注</button>
+                  <button class="ghost-btn sm" id="sfToggleProfile" type="button">侧面型辅助线</button>
+                </div>
+                <p class="ff-hint" id="sfHint">提示：照片上自动标记<b>发际 / 鼻根 / 鼻尖 / 鼻底 / 上唇 / 下唇 / 颏前 / 颏下 / 耳屏</b>等关键点，可拖动校准。</p>
+                <div class="ff-legend" id="sfLegend" hidden></div>
+              </div>
+
+              <!-- 指标录入：始终可见，可手动选择，也可上传照片后点「开始分析」自动计算 -->
+              <div class="ff-results ff-metrics">
+                <div class="ff-results-head">
+                  <span class="ff-results-title">侧面分析指标</span>
+                  <span class="ff-results-sub">可手动选择，或上传照片后点「开始分析」自动计算角度</span>
+                </div>
+                <div class="field"><label>侧面型</label><div class="ctl seg single" id="sfProfile">
+                  <button type="button" data-v="直面型">直面型</button>
+                  <button type="button" data-v="凸面型">凸面型</button>
+                  <button type="button" data-v="凹面型">凹面型</button>
+                </div></div>
+                <div class="field"><label>鼻型</label><div class="ctl seg single" id="sfNose">
+                  <button type="button" data-v="直鼻">直鼻</button>
+                  <button type="button" data-v="翘鼻">翘鼻</button>
+                  <button type="button" data-v="驼峰鼻">驼峰鼻</button>
+                  <button type="button" data-v="蒜头鼻">蒜头鼻</button>
+                </div></div>
+                <div class="field"><label>下巴形态</label><div class="ctl seg single" id="sfChin">
+                  <button type="button" data-v="尖翘">尖翘</button>
+                  <button type="button" data-v="正常">正常</button>
+                  <button type="button" data-v="后缩">后缩</button>
+                  <button type="button" data-v="前突">前突</button>
+                </div></div>
+                <div class="field"><label>唇形</label><div class="ctl seg single" id="sfLips">
+                  <button type="button" data-v="饱满">饱满</button>
+                  <button type="button" data-v="较薄">较薄</button>
+                  <button type="button" data-v="厚唇">厚唇</button>
+                </div></div>
+                <div class="field"><label>下颌线</label><div class="ctl seg single" id="sfJawline">
+                  <button type="button" data-v="清晰">清晰</button>
+                  <button type="button" data-v="模糊">模糊</button>
+                </div></div>
+              </div>
+            </section>
+
+            <!-- 区块八 -->
+            <section class="block" id="blk-problems">
+              <h2 class="block-title">八、问题分析</h2>
+              <p class="block-note">在每项右侧点选严重程度（轻 / 中 / 重）即可标记该问题，再次点同一档可取消；系统会据「变美金字塔」层级与严重程度，在下方实时算出待办优先级，并默认按严重程度归入对应象限——你也可在待办列表里手动把每个问题放入「立即做 / 计划做 / 少做 / 放下」任一象限，然后一键生成到「艾森豪威尔矩阵」。</p>
+
+              <div id="probBody"></div>
+
+              <div class="prob-priority" id="probPriority" hidden></div>
+
+              <div class="prob-actions">
+                <button class="primary-btn" id="probGenBtn" type="button">📋 生成问题待办到矩阵</button>
+                <span class="prob-gen-hint" id="probGenStatus"></span>
+              </div>
+            </section>
+
+            <div class="panel-footer">
+              <button class="primary-btn big" id="bodySaveBtn" type="button">保存全部数据</button>
+            </div>
+            <div class="save-toast" id="saveToast" hidden>已保存 ✓</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 3. 资源库 -->
+      <section class="view" id="view-resources">
+        <header class="view-head">
+          <h1>资源库</h1>
+          <p class="view-desc">收藏链接、文档与灵感，按分类管理。</p>
+        </header>
+        <div class="toolbar">
+          <input type="text" id="resSearch" class="inp" placeholder="搜索名称 / 备注…" />
+          <select id="resFilter" class="inp"></select>
+          <button class="primary-btn" id="resAddBtn">+ 新增资源</button>
+        </div>
+
+        <div class="res-list" id="resList"></div>
+
+        <!-- 变美金字塔：5 层从基础到气质 -->
+        <div class="pyramid-block">
+          <div class="pyramid-head">
+            <div class="pyramid-title-block">🌟 变美金字塔</div>
+            <p class="pyramid-desc">从底层「健康自信」到顶层「风格氛围」，变美是一个系统工程，一层一层往上累。</p>
+          </div>
+          <div class="pyramid-svg-wrap">
+            <svg class="pyramid-svg" viewBox="0 0 400 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="pyramidGrad" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stop-color="#f5e1b8"/>
+                  <stop offset="55%" stop-color="#fbeec7"/>
+                  <stop offset="100%" stop-color="#fdf8e8"/>
+                </linearGradient>
+              </defs>
+              <polygon points="20,320 380,320 200,55" fill="url(#pyramidGrad)" stroke="#b9a376" stroke-width="2" stroke-linejoin="round"/>
+              <line x1="54" y1="270" x2="346" y2="270" stroke="#b9a376" stroke-width="1.2"/>
+              <line x1="88" y1="220" x2="312" y2="220" stroke="#b9a376" stroke-width="1.2"/>
+              <line x1="122" y1="170" x2="278" y2="170" stroke="#b9a376" stroke-width="1.2"/>
+              <line x1="156" y1="120" x2="244" y2="120" stroke="#b9a376" stroke-width="1.2"/>
+              <g font-family="var(--serif), serif" font-size="14" fill="#7a5a30" text-anchor="middle">
+                <text id="pyr5" x="200" y="100" font-size="13">风格 氛围</text>
+                <text id="pyr4" x="200" y="148" style="word-spacing:12px">五官细节 脸型</text>
+                <text id="pyr3" x="200" y="198" style="word-spacing:14px">穿搭 妆容 发型</text>
+                <text id="pyr2" x="200" y="248" style="word-spacing:14px">体态 身材比例 皮肤 头发</text>
+                <text id="pyr1" x="200" y="298" style="word-spacing:12px">健康 自信</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 艾森豪威尔矩阵：紧急 × 重要 四象限坐标系 -->
+        <div class="eisen-block">
+          <div class="eisen-head">
+            <div class="eisen-title-block">🧭 艾森豪威尔矩阵</div>
+            <p class="eisen-desc">把要做的事按「紧急 × 重要」分进四个格子。右下角记录那些能交给别人的事。</p>
+          </div>
+          <div class="eisen-quadrant">
+            <span class="eisen-axis axis-top">重要</span>
+            <span class="eisen-axis axis-bottom">不重要</span>
+            <span class="eisen-axis axis-left">不紧急</span>
+            <span class="eisen-axis axis-right">紧急</span>
+            <div class="eisen-grid-q">
+              <div class="eisen-cell-q tl">
+                <span class="eisen-corner">（计划做）</span>
+                <div class="eisen-input-area"></div>
+              </div>
+              <div class="eisen-cell-q tr">
+                <span class="eisen-corner">（立即做）</span>
+                <div class="eisen-input-area"></div>
+              </div>
+              <div class="eisen-cell-q bl">
+                <span class="eisen-corner">（不要做）</span>
+                <div class="eisen-input-area"></div>
+              </div>
+              <div class="eisen-cell-q br">
+                <span class="eisen-corner">（少去做）</span>
+                <div class="eisen-input-area"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 资源编辑弹窗 -->
+        <div class="modal-mask" id="resModal" hidden>
+          <div class="modal">
+            <h3 id="resModalTitle">新增资源</h3>
+            <label>名称<input type="text" id="resName" class="inp" /></label>
+            <label>链接<input type="text" id="resUrl" class="inp" placeholder="https://…" /></label>
+            <label>分类
+              <input list="catList" id="resCat" class="inp" placeholder="如：学习 / 工具 / 灵感" />
+              <datalist id="catList"></datalist>
+            </label>
+            <label>备注<textarea id="resNote" class="inp" rows="3"></textarea></label>
+            <div class="modal-actions">
+              <button class="ghost-btn" id="resCancel">取消</button>
+              <button class="primary-btn" id="resSave">保存</button>
+            </div>
+          </div>
+        </div>
+        <!-- 资源删除确认弹窗 -->
+        <div class="modal-mask" id="resDelModal" hidden>
+          <div class="modal">
+            <h3>删除资源</h3>
+            <p class="modal-text">确认删除该资源？此操作不可撤销。</p>
+            <div class="modal-actions">
+              <button class="ghost-btn" id="resDelCancel">取消</button>
+              <button class="primary-btn" id="resDelSure">删除</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 日计划 -->
+      <section class="view" id="view-daily">
+        <header class="view-head">
+          <h1>日计划</h1>
+          <div class="date-pick">
+            <button class="ghost-btn" id="dailyPrev">‹</button>
+            <input type="date" id="dailyDate" class="inp" />
+            <button class="ghost-btn" id="dailyNext">›</button>
+            <button class="ghost-btn" id="dailyToday">今天</button>
+            <button class="jump-btn to-weekly" id="dailyToWeekly" type="button">
+              <svg class="jb-ico" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M13 13h5M16 10.5l2.5 2.5L16 15.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>打开周计划</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- 任务打卡 -->
+        <div class="daily-block">
+          <div class="daily-block-head"><span class="daily-block-title">任务打卡</span></div>
+          <div class="add-row">
+            <input type="text" id="dailyInput" class="inp grow" placeholder="添加今日待办，回车确认…" />
+            <button class="primary-btn" id="dailyAdd">添加</button>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><span id="dailyProgressFill"></span></div>
+            <span id="dailyProgressText" class="progress-text">0 / 0</span>
+          </div>
+          <ul class="todo-list" id="dailyList"></ul>
+        </div>
+
+        <!-- 三大模块：习惯打卡 / 时间轴 / 对比图 -->
+        <div class="daily-cols">
+          <!-- 左栏：习惯打卡（习惯追踪） -->
+          <div class="daily-col habit-col">
+            <div class="col-head">
+              <svg class="col-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="col-title">习惯打卡</span>
+            </div>
+
+            <div class="habit-sub habit-sub-col">
+              <div class="habit-sub-row">
+                <div class="habit-label"><span class="habit-ico ico-check" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>跟练</div>
+                <button class="ghost-btn sm" id="workoutPickBtn" type="button">+ 添加</button>
+              </div>
+              <div class="workout-list" id="workoutList"></div>
+            </div>
+
+            <div class="habit-sub">
+              <div class="habit-label"><span class="habit-ico ico-water" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h10l-1 14a4 4 0 0 1-4 3.8A4 4 0 0 1 8 18Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 4h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>饮水</div>
+              <div class="water-cups" id="waterCups"></div>
+            </div>
+
+            <div class="habit-sub">
+              <div class="habit-label"><span class="habit-ico ico-moon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>睡眠</div>
+              <div class="sleep-moons" id="sleepMoons"></div>
+            </div>
+
+            <div class="habit-sub">
+              <div class="habit-label"><span class="habit-ico ico-smile" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 14.5 Q12 18 16 14.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/></svg></span>心情</div>
+              <div class="mood-faces" id="moodFaces"></div>
+            </div>
+
+            <div class="habit-sub habit-sub-col">
+              <div class="habit-sub-row">
+                <div class="habit-label"><span class="habit-ico ico-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 6.6L21 10l-5 4.2 1.8 7L12 17.8 6.2 21.2 8 14.2 3 10l6.4-.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>自定义习惯</div>
+              </div>
+              <div class="add-row custom-add-row">
+                <input type="text" id="customHabitInput" class="inp grow" placeholder="添加一个习惯，回车确认…" />
+                <button class="primary-btn sm" id="customHabitAdd" type="button">添加</button>
+              </div>
+              <div class="custom-list" id="customHabitList"></div>
+            </div>
+          </div>
+
+          <!-- 中栏：时间轴（时间规划） -->
+          <div class="daily-col time-col">
+            <div class="col-head">
+              <svg class="col-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="col-title">时间轴</span>
+            </div>
+            <div class="tl-add">
+              <input type="time" id="tlTime" class="inp tl-time" />
+              <input type="text" id="tlText" class="inp grow" placeholder="安排一件事…" />
+              <button class="primary-btn" id="tlAdd">+</button>
+            </div>
+            <div class="tl-axis-row">
+              <div class="timeline" id="timeline"></div>
+              <div class="seg-notes">
+                <div class="seg-note">
+                  <textarea class="seg-input" id="seg1" placeholder="这一时段的安排 / 备忘…"></textarea>
+                </div>
+                <div class="seg-note">
+                  <textarea class="seg-input" id="seg2" placeholder="这一时段的安排 / 备忘…"></textarea>
+                </div>
+                <div class="seg-note">
+                  <textarea class="seg-input" id="seg3" placeholder="这一时段的安排 / 备忘…"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="tl-schedule" id="tlSchedule"></div>
+          </div>
+
+          <!-- 右栏：对比图（复盘对比） -->
+          <div class="daily-col review-col">
+            <div class="col-head">
+              <svg class="col-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="col-title">对比图</span>
+            </div>
+            <div class="compare">
+              <div class="cmp-half">
+                <div class="cmp-photo" data-side="top">
+                  <input type="file" class="cmp-file" accept="image/*" hidden />
+                  <button class="cmp-add" type="button">+ 添加照片</button>
+                  <img class="cmp-img" alt="" hidden />
+                  <div class="cmp-acts" hidden>
+                    <button class="cmp-change" type="button">更换</button>
+                    <button class="cmp-remove" type="button">移除</button>
+                  </div>
+                </div>
+              </div>
+              <div class="compare-divider"></div>
+              <div class="cmp-half">
+                <div class="cmp-photo" data-side="bottom">
+                  <input type="file" class="cmp-file" accept="image/*" hidden />
+                  <button class="cmp-add" type="button">+ 添加照片</button>
+                  <img class="cmp-img" alt="" hidden />
+                  <div class="cmp-acts" hidden>
+                    <button class="cmp-change" type="button">更换</button>
+                    <button class="cmp-remove" type="button">移除</button>
+                  </div>
+                </div>
+              </div>
+              <div class="compare-divider"></div>
+              <div class="day-metrics">
+                <div class="day-metrics-head">
+                  <span class="day-metrics-title">数据对比</span>
+                  <button class="primary-btn mini" id="dayMetricAdd" type="button">+ 添加数据项</button>
+                </div>
+                <p class="week-panel-sub">记录对比图的前后数据，自动计算变化（如体重、围度）</p>
+                <div class="metric-list" id="dayMetricList"></div>
+              </div>
+              <div class="compare-divider"></div>
+              <textarea class="cmp-note" id="cmpNote" placeholder="备注 / 说明…"></textarea>
+            </div>
+            <div class="daily-done-row" id="dailyDoneRow">
+              <div class="dd-status" id="ddStatus"></div>
+              <button class="primary-btn daily-done-btn" id="dailyDoneBtn" type="button">✓ 完成今日打卡</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 一日三餐：营养跟踪 -->
+        <div class="daily-block meals-block">
+          <div class="daily-block-head">
+            <span class="daily-block-title">一日三餐</span>
+            <div class="meals-goal seg single" id="mealGoal">
+              <button type="button" data-v="fat">减脂</button>
+              <button type="button" data-v="muscle">增肌</button>
+              <button type="button" data-v="keep">保持健康</button>
+            </div>
+          </div>
+          <p class="block-note">选择今日目标，记录早 / 午 / 晚三餐的照片与营养数据，系统自动计算热量与宏量营养素，并对照目标给出改进建议。</p>
+
+          <div class="meals-grid">
+            <!-- 早餐 -->
+            <div class="meal-card" data-meal="morning">
+              <div class="meal-head"><span class="meal-name">🍳 早餐</span><span class="meal-sub" id="mealSub-morning"></span></div>
+              <div class="meal-photo">
+                <input type="file" class="meal-file" accept="image/*" hidden />
+                <button class="meal-add" type="button">+ 照片</button>
+                <img class="meal-img" alt="" hidden />
+                <div class="meal-acts" hidden>
+                  <button class="meal-change" type="button">更换</button>
+                  <button class="meal-remove" type="button">移除</button>
+                </div>
+              </div>
+              <div class="meal-tools">
+                <button class="meal-recognize" type="button">📷 识别食物</button>
+                <button class="meal-pick" type="button">🔍 从库选</button>
+                <span class="meal-recog-status"></span>
+              </div>
+              <div class="meal-recog" hidden></div>
+              <div class="meal-inputs">
+                <label>热量(kcal)<input class="inp meal-k" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>蛋白质(g)<input class="inp meal-p" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>碳水(g)<input class="inp meal-c" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>脂肪(g)<input class="inp meal-f" type="number" min="0" step="1" placeholder="0" /></label>
+              </div>
+            </div>
+            <!-- 午餐 -->
+            <div class="meal-card" data-meal="noon">
+              <div class="meal-head"><span class="meal-name">🍱 午餐</span><span class="meal-sub" id="mealSub-noon"></span></div>
+              <div class="meal-photo">
+                <input type="file" class="meal-file" accept="image/*" hidden />
+                <button class="meal-add" type="button">+ 照片</button>
+                <img class="meal-img" alt="" hidden />
+                <div class="meal-acts" hidden>
+                  <button class="meal-change" type="button">更换</button>
+                  <button class="meal-remove" type="button">移除</button>
+                </div>
+              </div>
+              <div class="meal-tools">
+                <button class="meal-recognize" type="button">📷 识别食物</button>
+                <button class="meal-pick" type="button">🔍 从库选</button>
+                <span class="meal-recog-status"></span>
+              </div>
+              <div class="meal-recog" hidden></div>
+              <div class="meal-inputs">
+                <label>热量(kcal)<input class="inp meal-k" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>蛋白质(g)<input class="inp meal-p" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>碳水(g)<input class="inp meal-c" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>脂肪(g)<input class="inp meal-f" type="number" min="0" step="1" placeholder="0" /></label>
+              </div>
+            </div>
+            <!-- 晚餐 -->
+            <div class="meal-card" data-meal="night">
+              <div class="meal-head"><span class="meal-name">🍲 晚餐</span><span class="meal-sub" id="mealSub-night"></span></div>
+              <div class="meal-photo">
+                <input type="file" class="meal-file" accept="image/*" hidden />
+                <button class="meal-add" type="button">+ 照片</button>
+                <img class="meal-img" alt="" hidden />
+                <div class="meal-acts" hidden>
+                  <button class="meal-change" type="button">更换</button>
+                  <button class="meal-remove" type="button">移除</button>
+                </div>
+              </div>
+              <div class="meal-tools">
+                <button class="meal-recognize" type="button">📷 识别食物</button>
+                <button class="meal-pick" type="button">🔍 从库选</button>
+                <span class="meal-recog-status"></span>
+              </div>
+              <div class="meal-recog" hidden></div>
+              <div class="meal-inputs">
+                <label>热量(kcal)<input class="inp meal-k" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>蛋白质(g)<input class="inp meal-p" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>碳水(g)<input class="inp meal-c" type="number" min="0" step="1" placeholder="0" /></label>
+                <label>脂肪(g)<input class="inp meal-f" type="number" min="0" step="1" placeholder="0" /></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="meals-summary" id="mealSummary"></div>
+          <div class="meals-eval" id="mealEval"></div>
+        </div>
+
+        <!-- 跟练内容选择器：从资源库选取 -->
+        <div class="modal-mask" id="workoutPickModal" hidden>
+          <div class="modal">
+            <h3>选择「跟练」内容</h3>
+            <p class="modal-sub">从资源库选择今日要跟练的内容（可多选），勾选各内容后的开关即标记该项「已完成跟练」。</p>
+            <div class="workout-pick-list" id="workoutPickList"></div>
+            <div class="modal-actions">
+              <button class="ghost-btn" id="workoutPickClose">完成</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4.5 情绪盒子 -->
+      <section class="view" id="view-emotion">
+        <header class="view-head">
+          <h1>情绪盒子</h1>
+          <p class="view-desc">每个盲盒代表一种情绪。打开它，收下一句专属于此刻的治愈话语。</p>
+        </header>
+        <div id="emotionInner"></div>
+      </section>
+
+      <!-- 4.6 宠物之家 -->
+      <section class="view" id="view-pet">
+        <header class="view-head">
+          <h1>宠物之家</h1>
+          <p class="view-desc">和你的小团子一起变美吧～ 每日打卡获得食物，喂食、抚摸、装扮，看它一点点长大。</p>
+        </header>
+        <div id="petHomeInner"></div>
+      </section>
+
+      <!-- 5. 周计划 -->
+      <section class="view" id="view-weekly">
+        <header class="view-head">
+          <h1>周计划</h1>
+          <div class="date-pick">
+            <button class="ghost-btn" id="weekPrev">‹ 上周</button>
+            <span id="weekRange" class="week-range"></span>
+            <button class="ghost-btn" id="weekNext">下周 ›</button>
+          </div>
+        </header>
+
+        <!-- 区块一：本周重点与完成奖励 -->
+        <div class="week-top">
+          <div class="week-panel week-focus-panel">
+            <h2 class="week-panel-title">本周重点</h2>
+            <p class="week-panel-sub">选择或输入要重点关注的目标，可自由添加多个，如：早睡 / 控糖 / 运动</p>
+            <div class="focus-chips" id="focusChips">
+              <button class="chip" type="button">早睡</button>
+              <button class="chip" type="button">控糖</button>
+              <button class="chip" type="button">睡眠</button>
+              <button class="chip" type="button">运动</button>
+              <button class="chip" type="button">体态</button>
+              <button class="chip" type="button">化妆</button>
+              <button class="chip" type="button">护肤</button>
+              <button class="chip" type="button">穿搭</button>
+              <button class="chip" type="button">减肥</button>
+            </div>
+            <div class="focus-inputs" id="focusList"></div>
+            <button class="ghost-btn focus-add" id="focusAdd" type="button">+ 添加目标</button>
+          </div>
+          <div class="week-panel week-reward-panel">
+            <h2 class="week-panel-title">完成奖励</h2>
+            <p class="week-panel-sub">完成本周全部打卡后，奖励自己：</p>
+            <textarea class="inp" id="rewardInput" rows="3" placeholder="如：买一支新口红 / 看一场电影"></textarea>
+            <div class="reward-status" id="rewardStatus"></div>
+            <button class="primary-btn" id="weekSave" type="button">保存</button>
+          </div>
+        </div>
+
+        <!-- 区块二：每日打卡格子 -->
+        <h2 class="week-panel-title checks-title">每日打卡</h2>
+        <div class="week-checks" id="weekChecks"></div>
+
+        <!-- 区块三：数据对比 -->
+        <h2 class="week-panel-title checks-title">数据对比</h2>
+        <div class="cmp-block">
+          <div class="cmp-photos">
+            <div class="cmp-photo-slot">
+              <div class="cmp-photo-cap">上周</div>
+              <div class="wk-photo" data-side="prev">
+                <button class="cmp-add" type="button">+ 添加照片</button>
+                <img class="cmp-img" alt="" hidden />
+                <div class="cmp-acts" hidden>
+                  <button class="cmp-change" type="button">更换</button>
+                  <button class="cmp-remove" type="button">移除</button>
+                </div>
+                <input type="file" accept="image/*" class="cmp-file" hidden />
+              </div>
+            </div>
+            <div class="cmp-photo-slot">
+              <div class="cmp-photo-cap">本周</div>
+              <div class="wk-photo" data-side="curr">
+                <button class="cmp-add" type="button">+ 添加照片</button>
+                <img class="cmp-img" alt="" hidden />
+                <div class="cmp-acts" hidden>
+                  <button class="cmp-change" type="button">更换</button>
+                  <button class="cmp-remove" type="button">移除</button>
+                </div>
+                <input type="file" accept="image/*" class="cmp-file" hidden />
+              </div>
+            </div>
+          </div>
+          <p class="week-panel-sub">记录上周与本周关键数据，自动计算变化（如体重、腰围、体脂率）</p>
+          <div class="metric-list" id="metricList"></div>
+          <button class="primary-btn" id="metricAdd" type="button">+ 添加数据项</button>
+        </div>
+      </section>
+
+      <!-- 6. 100天总结 -->
+      <section class="view" id="view-hundred">
+        <header class="view-head">
+          <h1>100 天总结</h1>
+          <p class="view-desc">汇总你 100 天变美计划的全部成果，见证坚持的力量。</p>
+        </header>
+        <div class="hundred-setup">
+          <label>计划起点
+            <input type="date" id="hundredStart" class="inp" />
+          </label>
+          <button class="primary-btn" id="hundredSet">设定 / 更新</button>
+          <span class="hundred-tip">起点用于计算打卡天数与 100 天区间（含当日）。留空时将自动采用「2026 年历」设定的打卡起点。</span>
+          <span class="hundred-source" id="hStartSource"></span>
+        </div>
+        <!-- 区块一：顶部庆祝横幅（JS 填充） -->
+        <div class="h-block daily-block" id="hBanner"></div>
+        <!-- 区块二 ~ 十一（JS 填充） -->
+        <div class="hundred-board" id="hundredBoard"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="models/tfjs/tf.min.js"></script>
+  <script src="models/imagenet_classes.js"></script>
+  <script src="foodvision.js"></script>
+  <script src="storage.js?v=20260804a"></script>
+  <script src="app.quad2.js?v=20260804g"></script>
+  <script src="pet.js?v=20260803x"></script>
+  <div id="wbVerTag" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.2 monospace;color:#999;background:rgba(255,255,255,.7);padding:2px 6px;border-radius:4px;pointer-events:none;">v20260804g</div>
+</body>
+</html>
