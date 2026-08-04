@@ -3848,6 +3848,44 @@
     });
   }
 
+  /* ---------- 首次访问使用说明浮层 ---------- */
+  function showGuideOnFirstVisit() {
+    const KEY = "wb_guide_v1";
+    try { if (localStorage.getItem(KEY)) return; } catch (e) {}
+    // 注入样式
+    if (!document.getElementById("wbGuideStyle")) {
+      const st = document.createElement("style");
+      st.id = "wbGuideStyle";
+      st.textContent =
+        "#wbGuideOverlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;" +
+        "background:rgba(0,0,0,.45);padding:20px;font-family:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;}" +
+        ".wb-guide-card{background:#fff;max-width:360px;width:100%;border-radius:14px;padding:24px 22px;" +
+        "box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;animation:wbGuidePop .2s ease;}" +
+        "@keyframes wbGuidePop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}" +
+        ".wb-guide-emoji{font-size:34px;margin-bottom:10px;}" +
+        ".wb-guide-text{font-size:15px;line-height:1.7;color:#333;margin:0 0 18px;}" +
+        ".wb-guide-btn{display:inline-block;border:none;background:#e91e8c;color:#fff;font-size:15px;" +
+        "padding:10px 28px;border-radius:22px;cursor:pointer;font-weight:600;}" +
+        ".wb-guide-btn:hover{background:#d1167a;}";
+      document.head.appendChild(st);
+    }
+    const ov = document.createElement("div");
+    ov.id = "wbGuideOverlay";
+    ov.innerHTML =
+      '<div class="wb-guide-card">' +
+        '<div class="wb-guide-emoji">📌</div>' +
+        '<p class="wb-guide-text">数据存在你自己的浏览器里，清了浏览器数据，内容就找不回了，记得用左下角导出备份。</p>' +
+        '<button type="button" id="wbGuideOk" class="wb-guide-btn">我知道了</button>' +
+      '</div>';
+    document.body.appendChild(ov);
+    const close = () => {
+      ov.remove();
+      try { localStorage.setItem(KEY, "1"); } catch (e) {}
+    };
+    ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
+    ov.querySelector("#wbGuideOk").addEventListener("click", close);
+  }
+
   /* ---------- 备份：导出 / 导入 ---------- */
   function downloadJSON(filename, obj) {
     const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
@@ -3934,6 +3972,7 @@
   checkPeriodReminder();
   maybeAutoCalcPeriod();
   buildBackupBar(); // 左下角：导出/导入备份
+  showGuideOnFirstVisit(); // 首次打开弹使用说明
 
   // 照片较大，统一存入 IndexedDB（文本数据仍在 localStorage）。
   // 先还原照片再渲染，避免图片显示为占位标记；IDB 不可用时退化为直接渲染（仍走 localStorage）。
