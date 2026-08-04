@@ -1481,3 +1481,51 @@ text.pyr-active { fill: #c0392b; font-weight: 700; }
   .md-table .md-k { color: var(--rose); font-weight: 700; white-space: nowrap; text-align: right; }
   .md-table tfoot td { font-weight: 700; color: var(--ink); border-top: 2px solid var(--gold-3); border-bottom: none; }
   .md-table tfoot .md-k { color: var(--rose); }
+
+  /* ===== 运动 & 体型管理（力量/有氧/热量看板） ===== */
+  .fit-block { }
+  .fit-profile { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; background:var(--panel-soft); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:12px; font-family:var(--serif); }
+  .fit-profile .fp-label { font-weight:700; color:var(--ink); }
+  .fit-profile label { display:inline-flex; align-items:center; gap:4px; font-size:12.5px; color:var(--ink-soft); }
+  .fit-profile .inp { width:64px; padding:3px 6px; }
+  .fit-profile select.inp { width:auto; }
+  .fit-dash-cards { display:flex; gap:10px; margin-bottom:10px; }
+  .dash-card { flex:1; background:var(--panel-soft); border:1px solid var(--line); border-radius:10px; padding:10px; text-align:center; font-family:var(--serif); }
+  .dash-card .dc-t { display:block; font-size:12px; color:var(--ink-soft); }
+  .dash-card .dc-val { display:block; font-size:22px; font-weight:800; color:var(--ink); line-height:1.2; }
+  .dash-card .dc-val.neg { color:var(--rose); }
+  .dash-card .dc-val.pos { color:var(--gold-3); }
+  .dash-card .dc-u { font-size:11px; color:var(--ink-soft); }
+  .fit-dash-advice { display:flex; flex-direction:column; gap:4px; margin-bottom:6px; font-family:var(--serif); font-size:12.5px; }
+  .ad-line { color:var(--ink-soft); }
+  .ad-line.good { color:#3f9d6b; }
+  .ad-line.warn { color:#c8743a; }
+  .ad-line.info { color:var(--ink-soft); }
+  .fit-section { margin-top:14px; }
+  .fit-sec-head { display:flex; justify-content:space-between; align-items:center; font-family:var(--serif); font-weight:700; color:var(--ink); margin-bottom:8px; }
+  .fit-add-btn { font:600 12px/1 var(--serif); color:var(--rose); background:#fff; border:1px solid var(--rose); border-radius:14px; padding:5px 12px; cursor:pointer; }
+  .fit-add-btn:hover { background:var(--rose); color:#fff; }
+  .fit-empty { color:var(--ink-soft); font-family:var(--serif); font-size:12.5px; padding:6px 2px; }
+  .strength-card { border:1px solid var(--line); border-radius:10px; padding:8px 10px; margin-bottom:10px; background:var(--panel-soft); }
+  .sc-head { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .sc-split { font:600 13px var(--serif); padding:3px 6px; border-radius:8px; border:1px solid var(--line); background:#fff; }
+  .sc-vol, .sc-burn { font-size:12px; color:var(--ink-soft); font-family:var(--serif); }
+  .sc-burn { color:var(--rose); }
+  .sc-del { margin-left:auto; border:none; background:none; color:var(--ink-soft); cursor:pointer; font-size:14px; }
+  .ex-list { display:flex; flex-direction:column; gap:6px; }
+  .ex-row { display:grid; grid-template-columns:1fr 52px 52px 64px 70px 40px 26px; gap:6px; align-items:center; font-family:var(--serif); }
+  .ex-name { width:100%; }
+  .ex-num { display:inline-flex; align-items:center; gap:2px; font-size:11px; color:var(--ink-soft); }
+  .ex-num .inp { width:42px; padding:3px 4px; }
+  .ex-vol { font-size:12px; color:var(--ink-soft); text-align:right; }
+  .ex-done { display:inline-flex; align-items:center; justify-content:center; gap:2px; font-size:11px; color:var(--ink-soft); cursor:pointer; }
+  .ex-del { border:none; background:none; color:var(--ink-soft); cursor:pointer; font-size:13px; }
+  .ex-hint { grid-column:1 / -1; font-size:11px; color:var(--ink-soft); }
+  .ex-hint .ex-tip { color:var(--gold-3); margin-left:6px; }
+  .ex-add { margin-top:6px; font:600 12px/1 var(--serif); color:var(--ink-soft); background:none; border:1px dashed var(--line); border-radius:8px; padding:4px 10px; cursor:pointer; }
+  .cardio-card { display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:10px; padding:8px 10px; margin-bottom:8px; background:var(--panel-soft); font-family:var(--serif); }
+  .ca-type { font:600 13px var(--serif); padding:3px 6px; border-radius:8px; border:1px solid var(--line); background:#fff; }
+  .ca-dur { display:inline-flex; align-items:center; gap:3px; font-size:12px; color:var(--ink-soft); }
+  .ca-dur .inp { width:54px; padding:3px 4px; }
+  .ca-kcal { margin-left:auto; font-size:12.5px; color:var(--rose); }
+  .ca-del { border:none; background:none; color:var(--ink-soft); cursor:pointer; font-size:13px; }
