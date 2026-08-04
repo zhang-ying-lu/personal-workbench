@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>区块式页面模板 · Block Page Template</title>
+<!--
+  ============================================================================
+  区块式页面模板（可直接复制扩展新功能页）
+  ----------------------------------------------------------------------------
+  本文件自包含（HTML + 内联 CSS + 内联 JS），浏览器直接打开即可预览。
+  主题变量与「工作台」(index.html / app.js / styles.css) 保持一致，方便复制后
+  无缝并入主工程。
+
+  如何复用到主工程（三处对应）：
+    1) HTML：把 <section id="view-demo"> ... </section> 复制到 index.html
+              （放在其它 view-section 之间即可，无需改动导航，复制后把 id 改成
+                view-xxx，并把里面的 id 也改成自己的前缀，避免冲突）。
+    2) JS  ：把 <script> 里的 store 字段、getXxx()、renderXxx()、事件绑定
+              复制到 app.js 对应位置（store 默认对象、renderDaily 同级、init 区）。
+    3) CSS  ：把 <style> 里 .demo-* 相关规则复制到 styles.css（改前缀即可）。
+
+  区块约定（通用）：
+    区块一 = 页面中部，常分左右两个子区域（输入 / 选择 + 奖励 / 说明）
+    区块二 = 页面底部，常是横向排列的格子网格（打卡 / 状态）
+    每个区块用 .block / .block-head / .block-body 包裹，留白统一。
+  ============================================================================
+-->
+<style>
+  /* ---------- 洛可可主题变量（与工作台一致） ---------- */
+  :root {
+    --ink: #3a2f2a;
+    --ink-soft: #8a7d72;
+    --rose: #c47a87;
+    --rose-2: #d99aa6;
+    --gold: #b08d57;
+    --gold-2: #c9a86a;
+    --gold-3: #e0cda0;
+    --line: #e3d8c8;
+    --panel: #fffaf3;
+    --panel-soft: #fbf3e8;
+    --shadow: 0 8px 24px rgba(120, 90, 70, .12);
+    --serif: "Songti SC", "STSong", "Noto Serif SC", serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px;
+    font-family: var(--serif);
+    color: var(--ink);
+    background: linear-gradient(135deg, #fdf6ec 0%, #f7e9d8 100%);
+  }
+  .demo-wrap { max-width: 920px; margin: 0 auto; }
+
+  /* ---------- 视图头（标题 + 日期切换） ---------- */
+  .view-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .view-head h1 { font-size: 24px; margin: 0; letter-spacing: 2px; }
+  .date-pick { display: flex; align-items: center; gap: 10px; }
+  .ghost-btn {
+    border: 1px solid var(--line); background: var(--panel);
+    color: var(--ink); border-radius: 6px; padding: 6px 12px; cursor: pointer;
+    font-family: var(--serif); font-size: 13px;
+  }
+  .ghost-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .week-range { font-size: 14px; font-weight: 700; color: var(--rose); letter-spacing: 1px; }
+
+  /* ---------- 通用区块容器 ---------- */
+  .block {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .block-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .block-title { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+  .block-hint { font-size: 12px; color: var(--ink-soft); }
+
+  /* ---------- 区块一：左右两栏 ---------- */
+  .block-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .sub-card {
+    background: var(--panel-soft); border: 1px solid var(--line);
+    border-radius: 8px; padding: 14px 16px;
+  }
+  .sub-title {
+    font-size: 14px; font-weight: 700; color: var(--gold);
+    margin-bottom: 10px; letter-spacing: 1px;
+  }
+  /* 快捷标签 chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip {
+    border: 1px solid var(--line); background: var(--panel);
+    color: var(--ink-soft); border-radius: 999px; padding: 5px 12px;
+    font-size: 13px; cursor: pointer; transition: .15s;
+  }
+  .chip:hover { border-color: var(--rose); color: var(--rose); }
+  .chip.on { background: var(--rose); border-color: var(--rose); color: #fff; }
+  /* 文本输入 */
+  .inp {
+    width: 100%; border: 1px solid var(--line); border-radius: 6px;
+    padding: 9px 11px; font-family: var(--serif); font-size: 13.5px;
+    color: var(--ink); background: var(--panel); margin-bottom: 8px;
+  }
+  .inp:focus { outline: none; border-color: var(--gold); }
+  textarea.inp { resize: vertical; min-height: 64px; }
+  .primary-btn {
+    border: none; background: var(--rose); color: #fff; cursor: pointer;
+    border-radius: 6px; padding: 8px 16px; font-family: var(--serif);
+    font-size: 13.5px; letter-spacing: 1px;
+  }
+  .primary-btn:hover { background: var(--rose-2); }
+  .saved-tip { font-size: 12px; color: var(--gold); margin-left: 10px; opacity: 0; transition: .2s; }
+  .saved-tip.show { opacity: 1; }
+  .status-line { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+  .status-line.done { color: #2f9e6f; font-weight: 700; }
+
+  /* ---------- 区块二：格子网格（7 格：3+3+1） ---------- */
+  .checks {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; max-width: 560px;
+  }
+  .check {
+    aspect-ratio: 1 / 1; border-radius: 10px;
+    border: 2px solid var(--line); background: var(--panel-soft);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: .15s; user-select: none;
+  }
+  .check:hover { border-color: var(--rose); }
+  .check .day-label { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+  .check .day-date { font-size: 11px; color: var(--gold); margin-top: 2px; }
+  .check.on {
+    background: #e7f6ec; border-color: #2f9e6f;
+  }
+  .check.on .day-label::after { content: " ✓"; color: #2f9e6f; font-size: 18px; font-weight: 700; }
+  /* 第 7 格：休息日（居中、虚线样式） */
+  .check.rest {
+    grid-column: 1 / -1; max-width: 180px; margin: 0 auto; width: 100%;
+    border-style: dashed; aspect-ratio: auto; padding: 14px 0;
+  }
+  .check.rest.on { background: #eef3f8; border-color: var(--gold); }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 920px) {
+    .block-row { grid-template-columns: 1fr; }
+    .checks { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="demo-wrap">
+
+  <!-- ===================== 视图容器（复制到 index.html） ===================== -->
+  <section class="view" id="view-demo">
+    <header class="view-head">
+      <h1>功能页模板</h1>
+      <div class="date-pick">
+        <button class="ghost-btn" id="demoPrev">‹ 上周</button>
+        <span id="demoRange" class="week-range"></span>
+        <button class="ghost-btn" id="demoNext">下周 ›</button>
+      </div>
+    </header>
+
+    <!-- ===================== 区块一：左右两栏 ===================== -->
+    <div class="block">
+      <div class="block-head">
+        <span class="block-title">区块一 · 重点与奖励</span>
+        <span class="block-hint">左侧填目标，右侧填奖励</span>
+      </div>
+      <div class="block-row">
+        <!-- 左侧：重点目标 -->
+        <div class="sub-card">
+          <div class="sub-title">本周重点</div>
+          <div class="chips" id="demoChips">
+            <!-- 占位快捷标签，复制后改 data-v 与文案 -->
+            <span class="chip" data-v="早睡">早睡</span>
+            <span class="chip" data-v="控糖">控糖</span>
+            <span class="chip" data-v="运动">运动</span>
+            <span class="chip" data-v="阅读">阅读</span>
+            <span class="chip" data-v="护肤">护肤</span>
+            <span class="chip" data-v="冥想">冥想</span>
+          </div>
+          <!-- 最多 3 个文本目标（占位输入） -->
+          <input class="inp demo-focus" id="demoFocus1" placeholder="目标 1（例如：早睡）" />
+          <input class="inp demo-focus" id="demoFocus2" placeholder="目标 2（可选）" />
+          <input class="inp demo-focus" id="demoFocus3" placeholder="目标 3（可选）" />
+        </div>
+        <!-- 右侧：完成奖励 -->
+        <div class="sub-card">
+          <div class="sub-title">完成奖励</div>
+          <textarea class="inp" id="demoReward" placeholder="本周全部完成后的奖励，例如：买一支新口红"></textarea>
+          <div>
+            <button class="primary-btn" id="demoSave">保存</button>
+            <span class="saved-tip" id="demoSavedTip">已保存 ✓</span>
+          </div>
+          <div class="status-line" id="demoStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== 区块二：打卡格子 ===================== -->
+    <div class="block">
+      <div class="block-head">
+        <span class="block-title">区块二 · 每日打卡</span>
+        <span class="block-hint">点格子切换打卡，7 天全勤触发奖励</span>
+      </div>
+      <div class="checks" id="demoChecks"><!-- 由 JS 渲染 7 格 --></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ===========================================================================
+   模板 JS（复制到 app.js 对应位置）
+   说明：按「周一日期」作为每周 key，区块一(重点/奖励)与区块二(打卡)同周存储。
+   =========================================================================== */
+const STORE_KEY = "block_template_v1";
+
+/* ---- 存储工具 ---- */
+function loadStore() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+let store = loadStore();
+if (!store.weekly) store.weekly = {};
+
+/* ---- 日期工具（与主工程一致） ---- */
+const WK = ["日", "一", "二", "三", "四", "五", "六"];
+function fmt(d) {
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+function parse(s) { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); }
+function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function uid() { return Math.random().toString(36).slice(2, 9); }
+function mondayOf(d) { const x = new Date(d); const w = (x.getDay() + 6) % 7; return addDays(x, -w); }
+
+/* ---- 当前周（以周一为锚） ---- */
+let demoMon = mondayOf(new Date());
+
+/* ---- 取/建本周数据 ---- */
+const FOCUS_IDS = ["demoFocus1", "demoFocus2", "demoFocus3"];
+function getWeek() {
+  const key = fmt(demoMon);
+  if (!store.weekly[key]) store.weekly[key] = { focus: [], reward: "", checks: {} };
+  return store.weekly[key];
+}
+
+/* ---- 渲染：区块一（重点 chips + 文本 + 奖励 + 状态） ---- */
+function renderFocus() {
+  const w = getWeek();
+  // chips 回显：若文本包含 chip 词则高亮
+  document.querySelectorAll("#demoChips .chip").forEach((c) => {
+    const v = c.dataset.v;
+    c.classList.toggle("on", w.focus.some((f) => f === v));
+  });
+  FOCUS_IDS.forEach((id, i) => {
+    document.getElementById(id).value = w.focus[i] || "";
+  });
+  document.getElementById("demoReward").value = w.reward || "";
+  renderStatus();
+}
+function syncFocus() {
+  const w = getWeek();
+  const texts = FOCUS_IDS.map((id) => document.getElementById(id).value.trim()).filter(Boolean);
+  // 合并 chips 选中的词（去重）
+  const chipsSel = Array.from(document.querySelectorAll("#demoChips .chip.on")).map((c) => c.dataset.v);
+  w.focus = Array.from(new Set([...chipsSel, ...texts])).slice(0, 3);
+  saveStore(store);
+}
+function renderStatus() {
+  const w = getWeek();
+  const done = [1,2,3,4,5,6,7].filter((i) => w.checks[i]).length;
+  const el = document.getElementById("demoStatus");
+  if (done === 7) {
+    el.className = "status-line done";
+    el.textContent = `🎉 本周已全勤！别忘了奖励自己：${w.reward || "（未设置奖励）"}`;
+  } else {
+    el.className = "status-line";
+    el.textContent = `本周打卡进度：${done} / 7`;
+  }
+}
+
+/* ---- 渲染：区块二（7 格打卡） ---- */
+function renderChecks() {
+  const w = getWeek();
+  const box = document.getElementById("demoChecks");
+  box.innerHTML = "";
+  for (let i = 1; i <= 7; i++) {
+    const d = addDays(demoMon, i - 1);
+    const cell = document.createElement("div");
+    cell.className = "check" + (w.checks[i] ? " on" : "") + (i === 7 ? " rest" : "");
+    cell.innerHTML = `<div class="day-label">Day ${i}</div><div class="day-date">${d.getMonth()+1}/${d.getDate()}</div>`;
+    cell.addEventListener("click", () => {
+      w.checks[i] = !w.checks[i];
+      saveStore(store);
+      renderChecks();
+      renderStatus();
+    });
+    box.appendChild(cell);
+  }
+}
+
+/* ---- 渲染范围 + 整体 ---- */
+function renderRange() {
+  const sun = addDays(demoMon, 6);
+  document.getElementById("demoRange").textContent = `${fmt(demoMon)} ~ ${fmt(sun)}`;
+}
+function renderAll() { renderRange(); renderFocus(); renderChecks(); }
+
+/* ---- 事件绑定（复制到 app.js init 区） ---- */
+document.querySelectorAll("#demoChips .chip").forEach((c) => {
+  c.addEventListener("click", () => { c.classList.toggle("on"); syncFocus(); });
+});
+FOCUS_IDS.forEach((id) => {
+  document.getElementById(id).addEventListener("input", syncFocus);
+});
+document.getElementById("demoReward").addEventListener("input", () => {
+  getWeek().reward = document.getElementById("demoReward").value;
+  saveStore(store); renderStatus();
+});
+document.getElementById("demoSave").addEventListener("click", () => {
+  syncFocus();
+  getWeek().reward = document.getElementById("demoReward").value;
+  saveStore(store);
+  const tip = document.getElementById("demoSavedTip");
+  tip.classList.add("show");
+  setTimeout(() => tip.classList.remove("show"), 1400);
+});
+document.getElementById("demoPrev").addEventListener("click", () => { demoMon = addDays(demoMon, -7); renderAll(); });
+document.getElementById("demoNext").addEventListener("click", () => { demoMon = addDays(demoMon, 7); renderAll(); });
+
+/* ---- 启动 ---- */
+renderAll();
+</script>
+</body>
+</html>
