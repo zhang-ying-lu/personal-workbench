@@ -16,6 +16,8 @@
     dailyCompareNote: {}, // { "YYYY-MM-DD": 备注文本 } 对比图底部输入框
     dailyMetrics: {},   // { "YYYY-MM-DD": [{id, name, prev, curr}] } 对比图数据对比
     dailyMeals: {},     // { "YYYY-MM-DD": { goal:"fat|muscle|keep|", meals:{morning,noon,night:{photo,kcal,protein,carb,fat}} } } 一日三餐营养跟踪
+    profile: { gender: "女", height: 165, age: 28, weight: 55, activity: "light" }, // 体型参数：BMR/TDEE 估算
+    dailyWorkout: {},   // { "YYYY-MM-DD": { strength:[{id,split,exercises:[{id,name,sets,reps,weight,done,duration}]}], cardio:[{id,type,duration}] } }
     weekly: {},    // { "MonDate": { focus:[..], reward:"", checks:{1..7:bool} } } 周计划（重点/奖励/打卡）
     resources: [], // [{id, name, url, cat, note}]
     eisenhower: { q1: [], q2: [], q3: [], q4: [] }, // 艾森豪威尔矩阵：{q1..q4:[{id,text,done}]} 重要紧急/重要不紧急/紧急不重要/不重要不紧急
@@ -2523,8 +2525,242 @@
     renderComparePhotos();
     renderDailyMetrics();
     renderMeals();
+    renderFit();
     $("#cmpNote").value = getCompareNote();
     renderDailyDone();
+  }
+
+  /* ===================== 运动 & 体型管理（A 力量 / B 有氧 / C 热量看板） ===================== */
+  const FIT_SPLITS = ["推", "拉", "腿", "胸背", "肩臂", "全身", "自定义"];
+  const CARDIO_TYPES = { "跑步": 8, "快走": 3.5, "骑行": 7, "HIIT": 8, "游泳": 6, "椭圆机": 5, "跳绳": 10, "爬楼机": 8 };
+  const ACTIVITY_FACTORS = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725 };
+
+  function getProfile() {
+    if (!store.profile) store.profile = { gender: "女", height: 165, age: 28, weight: 55, activity: "light" };
+    const p = store.profile;
+    ["gender", "height", "age", "weight", "activity"].forEach((k) => {
+      if (p[k] === undefined) p[k] = { gender: "女", height: 165, age: 28, weight: 55, activity: "light" }[k];
+    });
+    return p;
+  }
+  function getWorkout() {
+    if (!store.dailyWorkout[dailyCur]) store.dailyWorkout[dailyCur] = { strength: [], cardio: [] };
+    const w = store.dailyWorkout[dailyCur];
+    if (!Array.isArray(w.strength)) w.strength = [];
+    if (!Array.isArray(w.cardio)) w.cardio = [];
+    return w;
+  }
+  function bmrOf(p) {
+    const w = mealNum(p.weight) || 0, h = mealNum(p.height) || 0, a = mealNum(p.age) || 0;
+    if (!w || !h || !a) return 0;
+    const base = 10 * w + 6.25 * h - 5 * a;
+    return Math.round(p.gender === "男" ? base + 5 : base - 161);
+  }
+  function tdeeOf(p) {
+    const b = bmrOf(p); if (!b) return 0;
+    return Math.round(b * (ACTIVITY_FACTORS[p.activity] || 1.375));
+  }
+  function cardioKcal(c) {
+    const p = getProfile(); const met = CARDIO_TYPES[c.type];
+    const dur = mealNum(c.duration); const w = mealNum(p.weight) || 0;
+    if (!met || !dur || !w) return 0;
+    return Math.round(met * w * (dur / 60));
+  }
+  function strengthBurnOf(s) {
+    const dur = mealNum(s.duration);
+    if (dur) return Math.round(dur * 5);                       // 有时长：5 kcal/min 估
+    const sets = (s.exercises || []).reduce((n, e) => n + (mealNum(e.sets) || 0), 0);
+    return Math.round(sets * 8);                               // 无时长：按总组数估
+  }
+  function mealIntake() { return mealTotals(getMeals()).kcal; }
+
+  // 渐进超负荷：查历史最近一次同名动作
+  function lastExerciseStats(name) {
+    if (!name) return null;
+    const dates = Object.keys(store.dailyWorkout).sort().reverse();
+    for (const d of dates) {
+      if (d === dailyCur) continue;
+      const w = store.dailyWorkout[d];
+      if (!w || !w.strength) continue;
+      for (const s of w.strength) {
+        for (const e of (s.exercises || [])) {
+          if (e.name && e.name === name && (mealNum(e.weight) || mealNum(e.reps))) {
+            const sw = mealNum(e.sets), rw = mealNum(e.reps), ww = mealNum(e.weight);
+            return { date: d, sets: sw, reps: rw, weight: ww, vol: sw * rw * ww };
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /* —— 渲染 —— */
+  function renderFit() { renderStrengthList(); renderCardioList(); updateFitDash(); }
+
+  function renderStrengthList() {
+    const box = $("#strengthList"); if (!box) return;
+    const list = getWorkout().strength;
+    if (!list.length) { box.innerHTML = `<div class="fit-empty">还没有力量训练，点「+ 添加训练」记录今天练了什么。</div>`; return; }
+    box.innerHTML = list.map((s) => {
+      const exRows = (s.exercises || []).map((e) => {
+        const last = lastExerciseStats(e.name);
+        const vol = (mealNum(e.sets) || 0) * (mealNum(e.reps) || 0) * (mealNum(e.weight) || 0);
+        const lastHint = last ? `<span class="ex-last">上次 ${last.date.slice(5)}：${last.weight}kg×${last.reps}（${last.vol}kg 容量）</span>` : "";
+        const tip = (last && mealNum(e.weight) > 0 && mealNum(e.weight) <= last.weight) ? `<span class="ex-tip">可尝试加重 2.5–5kg 或加 1–2 次（渐进超负荷）</span>` : "";
+        return `<div class="ex-row" data-id="${e.id}">
+          <input class="ex-name inp" value="${esc(e.name || "")}" placeholder="动作名，如 卧推" />
+          <label class="ex-num">组<input class="ex-sets inp" type="number" min="0" value="${e.sets ?? ""}" /></label>
+          <label class="ex-num">次<input class="ex-reps inp" type="number" min="0" value="${e.reps ?? ""}" /></label>
+          <label class="ex-num">kg<input class="ex-weight inp" type="number" min="0" value="${e.weight ?? ""}" /></label>
+          <span class="ex-vol">${vol ? vol + "kg" : ""}</span>
+          <label class="ex-done" title="完成">✓<input type="checkbox" class="ex-check" ${e.done ? "checked" : ""} /></label>
+          <button class="ex-del" data-id="${e.id}" title="删除">✕</button>
+          <div class="ex-hint">${lastHint}${tip}</div>
+        </div>`;
+      }).join("");
+      const totalVol = (s.exercises || []).reduce((n, e) => n + (mealNum(e.sets) || 0) * (mealNum(e.reps) || 0) * (mealNum(e.weight) || 0), 0);
+      const burn = strengthBurnOf(s);
+      return `<div class="strength-card" data-id="${s.id}">
+        <div class="sc-head">
+          <select class="sc-split">${FIT_SPLITS.map((x) => `<option ${x === s.split ? "selected" : ""}>${x}</option>`).join("")}</select>
+          <span class="sc-vol">容量 ${totalVol} kg</span>
+          <span class="sc-burn">≈ ${burn} kcal</span>
+          <button class="sc-del" data-id="${s.id}" title="删除本训练">✕</button>
+        </div>
+        <div class="ex-list">${exRows}</div>
+        <button class="ex-add" data-id="${s.id}" type="button">+ 添加动作</button>
+      </div>`;
+    }).join("");
+    box.querySelectorAll(".strength-card").forEach((card) => {
+      const sid = card.dataset.id;
+      const sess = () => getWorkout().strength.find((x) => x.id === sid);
+      card.querySelector(".sc-split").addEventListener("change", (e) => { sess().split = e.target.value; save(); });
+      card.querySelector(".sc-del").addEventListener("click", () => { getWorkout().strength = getWorkout().strength.filter((x) => x.id !== sid); save(); renderStrengthList(); updateFitDash(); });
+      card.querySelector(".ex-add").addEventListener("click", () => {
+        sess().exercises.push({ id: uid(), name: "", sets: 0, reps: 0, weight: 0, done: false });
+        save(); renderStrengthList(); updateFitDash();
+      });
+      card.querySelectorAll(".ex-row").forEach((row) => {
+        const eid = row.dataset.id;
+        const ex = () => sess().exercises.find((y) => y.id === eid);
+        const onInput = () => {
+          const e = ex();
+          e.name = row.querySelector(".ex-name").value;
+          e.sets = row.querySelector(".ex-sets").value === "" ? 0 : parseFloat(row.querySelector(".ex-sets").value);
+          e.reps = row.querySelector(".ex-reps").value === "" ? 0 : parseFloat(row.querySelector(".ex-reps").value);
+          e.weight = row.querySelector(".ex-weight").value === "" ? 0 : parseFloat(row.querySelector(".ex-weight").value);
+          save(); updateFitDash();
+        };
+        row.querySelector(".ex-name").addEventListener("input", onInput);
+        row.querySelector(".ex-sets").addEventListener("input", onInput);
+        row.querySelector(".ex-reps").addEventListener("input", onInput);
+        row.querySelector(".ex-weight").addEventListener("input", onInput);
+        row.querySelector(".ex-check").addEventListener("change", (e) => { ex().done = e.target.checked; save(); });
+        row.querySelector(".ex-del").addEventListener("click", () => {
+          sess().exercises = sess().exercises.filter((y) => y.id !== eid);
+          save(); renderStrengthList(); updateFitDash();
+        });
+      });
+    });
+  }
+
+  function renderCardioList() {
+    const box = $("#cardioList"); if (!box) return;
+    const list = getWorkout().cardio;
+    if (!list.length) { box.innerHTML = `<div class="fit-empty">还没有有氧记录，点「+ 添加」记录跑步 / 快走等。</div>`; return; }
+    box.innerHTML = list.map((c) => {
+      const k = cardioKcal(c);
+      return `<div class="cardio-card" data-id="${c.id}">
+        <select class="ca-type">${Object.keys(CARDIO_TYPES).map((t) => `<option ${t === c.type ? "selected" : ""}>${t}</option>`).join("")}</select>
+        <label class="ca-dur">时长<input class="ca-min inp" type="number" min="0" value="${c.duration ?? ""}" />min</label>
+        <span class="ca-kcal">≈ ${k} kcal</span>
+        <button class="ca-del" data-id="${c.id}" title="删除">✕</button>
+      </div>`;
+    }).join("");
+    box.querySelectorAll(".cardio-card").forEach((card) => {
+      const cid = card.dataset.id;
+      const ca = () => getWorkout().cardio.find((x) => x.id === cid);
+      card.querySelector(".ca-type").addEventListener("change", (e) => { ca().type = e.target.value; save(); renderCardioList(); updateFitDash(); });
+      card.querySelector(".ca-min").addEventListener("input", (e) => { ca().duration = e.target.value === "" ? 0 : parseFloat(e.target.value); save(); updateFitDash(); });
+      card.querySelector(".ca-del").addEventListener("click", () => { getWorkout().cardio = getWorkout().cardio.filter((x) => x.id !== cid); save(); renderCardioList(); updateFitDash(); });
+    });
+  }
+
+  function updateFitDash() {
+    const p = getProfile();
+    const setVal = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v; };
+    setVal("#fitGender", p.gender);
+    setVal("#fitHeight", p.height);
+    setVal("#fitAge", p.age);
+    setVal("#fitWeight", p.weight);
+    setVal("#fitActivity", p.activity);
+
+    const bmr = bmrOf(p), tdee = tdeeOf(p);
+    const intake = mealIntake();
+    const w = getWorkout();
+    const cardioBurn = w.cardio.reduce((n, c) => n + cardioKcal(c), 0);
+    const strengthBurn = w.strength.reduce((n, s) => n + strengthBurnOf(s), 0);
+    const totalBurn = tdee + cardioBurn + strengthBurn;
+    const goal = getMeals().goal;
+    const goalNet = goal === "muscle" ? 250 : goal === "fat" ? -400 : 0;
+    const targetIntake = totalBurn + goalNet;
+    const net = intake - totalBurn;
+
+    $("#dashIntake").textContent = Math.round(intake);
+    $("#dashBurn").textContent = Math.round(totalBurn);
+    const netEl = $("#dashNet");
+    netEl.textContent = (net > 0 ? "+" : "") + Math.round(net);
+    netEl.className = "dc-val " + (net < 0 ? "neg" : net > 0 ? "pos" : "");
+
+    const ad = $("#fitAdvice");
+    let html = "";
+    if (bmr) html += `<span class="ad-line">基础代谢 ${bmr} · 维持消耗(TDEE) ${tdee} kcal</span>`;
+    if (!goal) {
+      html += `<span class="ad-line info">先在上方「一日三餐」选择今日目标（减脂 / 增肌 / 保持健康），看板会对照目标给建议。</span>`;
+    } else if (!intake && !cardioBurn && !strengthBurn) {
+      html += `<span class="ad-line info">已选目标「${MEAL_GOAL_TARGETS[goal].name}」，记录三餐与训练后显示当日热量缺口。</span>`;
+    } else {
+      const gap = Math.round(targetIntake - intake);
+      if (goal === "fat") {
+        if (net <= -300 && net >= -550) html += `<span class="ad-line good">当前缺口 ${Math.round(-net)} kcal，落在减脂理想区间(300–500)，保持住 👍</span>`;
+        else if (net > -300) html += `<span class="ad-line warn">缺口偏小（${Math.round(-net)} kcal）。距目标还差约 ${gap > 0 ? gap : 0} kcal——少点主食或加 10–15 分钟有氧。</span>`;
+        else html += `<span class="ad-line warn">缺口偏大（${Math.round(-net)} kcal）。别长期低于基础代谢 ${bmr}，多摄入蛋白（鸡胸/蛋/酸奶）防掉肌肉。</span>`;
+      } else if (goal === "muscle") {
+        if (net >= 150 && net <= 400) html += `<span class="ad-line good">当前盈余 ${Math.round(net)} kcal，适合增肌且不易囤脂 👍</span>`;
+        else if (net < 150) html += `<span class="ad-line warn">热量偏少（盈余 ${Math.round(net)} kcal）。增肌建议盈余 200–300，还差约 ${gap < 0 ? -gap : 0} kcal——加一份碳水+蛋白加餐。</span>`;
+        else html += `<span class="ad-line warn">盈余偏大（${Math.round(net)} kcal），多余易转脂肪。可减少约 ${Math.round(net - 300)} kcal 摄入。</span>`;
+      } else {
+        if (Math.abs(net) <= 120) html += `<span class="ad-line good">热量基本平衡（${Math.round(net) > 0 ? "+" : ""}${Math.round(net)} kcal），维持期达标 ✓</span>`;
+        else html += `<span class="ad-line warn">与维持目标差 ${gap > 0 ? gap : -gap} kcal，微调摄入即可。</span>`;
+      }
+      if (intake && intake < bmr) html += `<span class="ad-line warn">⚠️ 摄入 ${Math.round(intake)} 低于基础代谢 ${bmr}，长期易掉代谢与肌肉，建议提到至少 BMR。</span>`;
+    }
+    ad.innerHTML = html;
+  }
+
+  function setupFit() {
+    $("#addStrength").addEventListener("click", () => {
+      getWorkout().strength.push({ id: uid(), split: "推", exercises: [{ id: uid(), name: "", sets: 0, reps: 0, weight: 0, done: false }] });
+      save(); renderStrengthList(); updateFitDash();
+    });
+    $("#addCardio").addEventListener("click", () => {
+      getWorkout().cardio.push({ id: uid(), type: "跑步", duration: 30 });
+      save(); renderCardioList(); updateFitDash();
+    });
+    const bindProf = (id, key, isNum) => {
+      const el = $(id); if (!el) return;
+      const onCh = () => {
+        getProfile()[key] = isNum ? (el.value === "" ? 0 : parseFloat(el.value)) : el.value;
+        save(); updateFitDash();
+      };
+      el.addEventListener("input", onCh);
+      el.addEventListener("change", onCh);
+    };
+    bindProf("#fitGender", "gender", false);
+    bindProf("#fitHeight", "height", true);
+    bindProf("#fitAge", "age", true);
+    bindProf("#fitWeight", "weight", true);
+    bindProf("#fitActivity", "activity", false);
   }
 
   /* 左栏：习惯打卡 */
@@ -2764,6 +3000,7 @@
   });
   setupComparePhotos();
   setupMeals();
+  setupFit();
   $("#dayMetricAdd").addEventListener("click", () => {
     getDailyMetrics().push({ id: uid(), name: "", prev: null, curr: null });
     save(); renderDailyMetrics();
