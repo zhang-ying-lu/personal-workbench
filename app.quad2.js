@@ -2119,7 +2119,7 @@
     return store.dailySegments[dailyCur];
   }
   // 一日三餐：目标（减脂/增肌/保持健康）+ 三餐（照片 + 热量kcal + 蛋白质/碳水/脂肪 g）
-  function blankMeal() { return { photo: null, kcal: null, protein: null, carb: null, fat: null }; }
+  function blankMeal() { return { photo: null, kcal: null, protein: null, carb: null, fat: null, items: [] }; }
   const MEAL_KEYS = ["morning", "noon", "night"];
   const MEAL_LABELS = { morning: "🍳 早餐", noon: "🍱 午餐", night: "🍲 晚餐" };
   function getMeals() {
@@ -2162,8 +2162,67 @@
       card.querySelector(".meal-p").value = d.protein == null ? "" : d.protein;
       card.querySelector(".meal-c").value = d.carb == null ? "" : d.carb;
       card.querySelector(".meal-f").value = d.fat == null ? "" : d.fat;
+      renderMealDetail(key);
     });
     updateMealEval();
+  }
+
+  // 按 food-calorie-analyzer 格式渲染本餐明细表（食物 / 估算重量 / 单项热量 / 总热量）
+  function renderMealDetail(key) {
+    const box = $(`.meal-card[data-meal="${key}"] .meal-detail`);
+    if (!box) return;
+    const items = getMeals().meals[key].items || [];
+    if (!items.length) { box.hidden = true; box.innerHTML = ""; return; }
+    let total = 0;
+    const rows = items.map((it) => {
+      const k = mealNum(it.kcal);
+      total += k;
+      return `<tr><td class="md-name">${esc(it.name)}</td><td class="md-w">${mealNum(it.weight) || 0} g</td><td class="md-k">${k.toFixed(0)} kcal</td></tr>`;
+    }).join("");
+    box.hidden = false;
+    box.innerHTML =
+      `<div class="md-title">本餐明细（识别 · 估算）</div>` +
+      `<table class="md-table"><thead><tr><th>食物</th><th>估算重量</th><th>单项热量</th></tr></thead><tbody>${rows}</tbody>` +
+      `<tfoot><tr><td>本餐合计</td><td></td><td class="md-k">${total.toFixed(0)} kcal</td></tr></tfoot></table>`;
+  }
+
+  // 根据 items 累加，写入本餐合计并刷新明细/评估
+  function applyMealItems(key) {
+    const d = getMeals().meals[key];
+    const items = d.items || [];
+    let kcal = 0, p = 0, c = 0, f = 0;
+    items.forEach((it) => { kcal += mealNum(it.kcal); p += mealNum(it.p); c += mealNum(it.c); f += mealNum(it.f); });
+    d.kcal = kcal ? Math.round(kcal) : null;
+    d.protein = p ? Math.round(p) : null;
+    d.carb = c ? Math.round(c) : null;
+    d.fat = f ? Math.round(f) : null;
+    const card = $(`.meal-card[data-meal="${key}"]`);
+    if (card) {
+      card.querySelector(".meal-k").value = d.kcal == null ? "" : d.kcal;
+      card.querySelector(".meal-p").value = d.protein == null ? "" : d.protein;
+      card.querySelector(".meal-c").value = d.carb == null ? "" : d.carb;
+      card.querySelector(".meal-f").value = d.fat == null ? "" : d.fat;
+    }
+    save();
+    renderMealDetail(key);
+    updateMealEval();
+  }
+
+  // 切换某食物是否计入本餐（多选累加；再点取消）
+  function toggleMealItem(card, key, food, statusEl, recogEl) {
+    const d = getMeals().meals[key];
+    if (!d.items) d.items = [];
+    const idx = d.items.findIndex((it) => it.id === food.id);
+    if (idx >= 0) d.items.splice(idx, 1);
+    else {
+      const est = window.FoodVision ? window.FoodVision.estimate(food) : { kcal: food.kcal || 0, p: food.p || 0, c: food.c || 0, f: food.f || 0 };
+      d.items.push({ id: food.id, name: food.name, weight: food.portion || 0, kcal: est.kcal, p: est.p, c: est.c, f: est.f });
+    }
+    applyMealItems(key);
+    if (recogEl && !recogEl.hidden) {
+      recogEl.querySelectorAll(".recog-chip").forEach((b) => b.classList.toggle("on", d.items.some((it) => it.id === b.dataset.fid)));
+    }
+    if (statusEl) statusEl.textContent = d.items.length ? `已选 ${d.items.length} 项，本餐 ${Math.round(d.items.reduce((s, it) => s + mealNum(it.kcal), 0))} kcal` : "";
   }
 
   function mealTotals(m) {
@@ -2257,7 +2316,12 @@
       file.addEventListener("change", (e) => {
         const f = e.target.files[0]; e.target.value = "";
         if (!f) return;
-        compressImage(f).then((d) => { getMeals().meals[key].photo = d; save(); renderMealPhoto(key); }).catch((err) => alert(err.message));
+        compressImage(f).then((d) => {
+          getMeals().meals[key].photo = d; save(); renderMealPhoto(key);
+          const statusEl = card.querySelector(".meal-recog-status");
+          const recogEl = card.querySelector(".meal-recog");
+          if (typeof window.FoodVision !== "undefined") runRecognize(card, key, img, statusEl, recogEl, true);
+        }).catch((err) => alert(err.message));
       });
       [["meal-k", "kcal"], ["meal-p", "protein"], ["meal-c", "carb"], ["meal-f", "fat"]].forEach(([cls, fld]) => {
         const inp = card.querySelector("." + cls);
@@ -2276,40 +2340,34 @@
     });
   }
 
-  // —— 拍照识别食物（本地模型，无外部 API）——
-  function fillMealCard(card, food, statusEl, recogEl) {
-    const est = window.FoodVision.estimate(food);
-    const set = (cls, val) => { const el = card.querySelector("." + cls); el.value = val; el.dispatchEvent(new Event("input")); };
-    set("meal-k", est.kcal); set("meal-p", est.p); set("meal-c", est.c); set("meal-f", est.f);
-    recogEl.hidden = true;
-    statusEl.textContent = "已填入：" + food.name + "（" + est.kcal + "kcal）";
-    setTimeout(() => { if (statusEl.textContent.indexOf("已填入") >= 0) statusEl.textContent = ""; }, 2600);
-  }
-
-  function runRecognize(card, key, img, statusEl, recogEl) {
-    if (img.hidden || !img.getAttribute("src")) { alert("请先上传这张餐的照片，再点「识别食物」。"); return; }
-    if (typeof window.FoodVision === "undefined") { alert("识别引擎未加载，请刷新页面后重试。"); return; }
-    statusEl.textContent = "加载模型中…";
+  // —— 拍照识别食物（本地模型，无外部 API）；auto=true 时静默（用于上传后自动识别）——
+  function runRecognize(card, key, img, statusEl, recogEl, auto) {
+    if (img.hidden || !img.getAttribute("src")) { if (!auto) alert("请先上传这张餐的照片，再点「识别食物」。"); return; }
+    if (typeof window.FoodVision === "undefined") { if (!auto) alert("识别引擎未加载，请刷新页面后重试（需通过 http 访问，file:// 下无法加载模型）。"); return; }
+    if (statusEl) statusEl.textContent = "加载模型中…";
     window.FoodVision.loadFoods().then(() => window.FoodVision.loadModel()).then(() => {
-      statusEl.textContent = "识别中…";
+      if (statusEl) statusEl.textContent = "识别中…";
       return window.FoodVision.classify(img, 6);
     }).then((preds) => {
-      statusEl.textContent = "";
+      if (statusEl) statusEl.textContent = "";
       const seen = {}; const foodsMap = [];
       preds.forEach((pr) => {
         window.FoodVision.matchClass(pr.className).forEach((f) => { if (!seen[f.id]) { seen[f.id] = true; foodsMap.push({ food: f, by: pr }); } });
       });
       recogEl.innerHTML = ""; recogEl.dataset.mode = "recog";
       const head = document.createElement("div"); head.className = "recog-head";
-      head.textContent = "识别结果（点击食物即可填入营养）";
+      head.textContent = "识别结果（点击勾选食物，可多选累加；再点取消）";
       recogEl.appendChild(head);
+      const d = getMeals().meals[key];
+      if (!d.items) d.items = [];
       if (foodsMap.length) {
         const wrap = document.createElement("div"); wrap.className = "recog-chips";
         foodsMap.forEach(({ food }) => {
-          const b = document.createElement("button"); b.type = "button"; b.className = "recog-chip";
+          const b = document.createElement("button"); b.type = "button"; b.className = "recog-chip"; b.dataset.fid = food.id;
           const est = window.FoodVision.estimate(food);
           b.textContent = food.name + " · " + est.kcal + "kcal";
-          b.addEventListener("click", () => fillMealCard(card, food, statusEl, recogEl));
+          if (d.items.some((it) => it.id === food.id)) b.classList.add("on");
+          b.addEventListener("click", () => toggleMealItem(card, key, food, statusEl, recogEl));
           wrap.appendChild(b);
         });
         recogEl.appendChild(wrap);
@@ -2326,7 +2384,7 @@
       });
       recogEl.appendChild(tags);
       recogEl.hidden = false;
-    }).catch((err) => { statusEl.textContent = ""; alert("识别失败：" + (err && err.message ? err.message : err)); });
+    }).catch((err) => { if (statusEl) statusEl.textContent = ""; if (!auto) alert("识别失败：" + (err && err.message ? err.message : err)); });
   }
 
   function togglePick(card, key, statusEl, recogEl) {
@@ -2343,10 +2401,12 @@
         const r = window.FoodVision.search(q); list.innerHTML = "";
         if (!r.length) { list.innerHTML = '<p class="recog-hint">没找到，换个关键词试试</p>'; return; }
         r.forEach((f) => {
-          const b = document.createElement("button"); b.type = "button"; b.className = "recog-chip";
+          const b = document.createElement("button"); b.type = "button"; b.className = "recog-chip"; b.dataset.fid = f.id;
           const est = window.FoodVision.estimate(f);
           b.textContent = f.name + " · " + est.kcal + "kcal";
-          b.addEventListener("click", () => fillMealCard(card, f, statusEl, recogEl));
+          const d = getMeals().meals[key];
+          if (d.items && d.items.some((it) => it.id === f.id)) b.classList.add("on");
+          b.addEventListener("click", () => toggleMealItem(card, key, f, statusEl, recogEl));
           list.appendChild(b);
         });
       };
