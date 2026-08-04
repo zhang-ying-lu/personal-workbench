@@ -1470,3 +1470,14 @@ text.pyr-active { fill: #c0392b; font-weight: 700; }
 @media (max-width: 460px) {
   .blind-grid { grid-template-columns: 1fr; max-width: 260px; }
 }
+  .meal-detail { margin-top: 8px; }
+  .meal-detail[hidden] { display: none; }
+  .md-title { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 6px; font-family: var(--serif); }
+  .md-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-family: var(--serif); }
+  .md-table th, .md-table td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--line); }
+  .md-table th { color: var(--ink-soft); font-weight: 700; background: var(--panel-soft); }
+  .md-table tbody .md-name { color: var(--ink); }
+  .md-table .md-w { color: var(--ink-soft); white-space: nowrap; }
+  .md-table .md-k { color: var(--rose); font-weight: 700; white-space: nowrap; text-align: right; }
+  .md-table tfoot td { font-weight: 700; color: var(--ink); border-top: 2px solid var(--gold-3); border-bottom: none; }
+  .md-table tfoot .md-k { color: var(--rose); }
