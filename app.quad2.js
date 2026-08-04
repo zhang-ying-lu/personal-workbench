@@ -3848,12 +3848,92 @@
     });
   }
 
+  /* ---------- 备份：导出 / 导入 ---------- */
+  function downloadJSON(filename, obj) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  async function exportBackup() {
+    try {
+      const snap = clone(store);
+      // 先把照片占位标记还原成真实 dataURL，使备份自包含、可跨设备/换浏览器使用
+      if (window.hydratePhotos) {
+        try { await hydratePhotos(snap); } catch (e) { /* IDB 不可用时保留占位标记 */ }
+      }
+      const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      downloadJSON("workbench-backup-" + stamp + ".json", snap);
+      flashBackup("已导出备份");
+    } catch (e) {
+      alert("导出失败：" + (e && e.message ? e.message : e));
+    }
+  }
+
+  async function importBackupFromFile(file) {
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data || typeof data !== "object") throw new Error("文件格式不正确");
+      store = deepMerge(clone(defaultStore), data);
+      await save(); // 照片写回 IndexedDB，文本写回 localStorage
+      if (window.hydratePhotos) { try { await hydratePhotos(store); } catch (e) {} }
+      bootRender();
+      flashBackup("备份已导入");
+    } catch (e) {
+      alert("导入失败：" + (e && e.message ? e.message : e));
+    }
+  }
+
+  function flashBackup(msg) {
+    const t = document.getElementById("wbBackupTip");
+    if (!t) return;
+    t.textContent = msg;
+    t.style.opacity = "1";
+    clearTimeout(t._t);
+    t._t = setTimeout(() => { t.style.opacity = "0"; }, 1600);
+  }
+
+  function buildBackupBar() {
+    const bar = document.createElement("div");
+    bar.id = "wbBackupBar";
+    bar.style.cssText = "position:fixed;left:8px;bottom:6px;z-index:9999;display:flex;gap:6px;align-items:center;";
+    const base = "font:11px/1.2 sans-serif;color:#555;background:rgba(255,255,255,.85);border:1px solid #ccc;border-radius:4px;padding:3px 8px;cursor:pointer;";
+    const btnExport = document.createElement("button");
+    btnExport.type = "button"; btnExport.textContent = "导出备份"; btnExport.style.cssText = base;
+    const btnImport = document.createElement("button");
+    btnImport.type = "button"; btnImport.textContent = "导入备份"; btnImport.style.cssText = base;
+    const fileInput = document.createElement("input");
+    fileInput.type = "file"; fileInput.accept = "application/json,.json"; fileInput.style.display = "none";
+    btnExport.addEventListener("click", exportBackup);
+    btnImport.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) importBackupFromFile(f);
+      fileInput.value = "";
+    });
+    bar.appendChild(btnExport);
+    bar.appendChild(btnImport);
+    bar.appendChild(fileInput);
+    document.body.appendChild(bar);
+
+    const tip = document.createElement("div");
+    tip.id = "wbBackupTip";
+    tip.style.cssText = "position:fixed;left:8px;bottom:34px;z-index:9999;font:11px/1.2 sans-serif;color:#fff;background:rgba(0,0,0,.7);padding:3px 8px;border-radius:4px;opacity:0;transition:opacity .2s;pointer-events:none;";
+    document.body.appendChild(tip);
+  }
+
   /* ---------- 初始化 ---------- */
   $("#brandDate").textContent = "2026";
   $("#dailyDate").value = TODAY_STR;
   normalizePeriod(); // 旧版 history → 新版 cycles 迁移
   checkPeriodReminder();
   maybeAutoCalcPeriod();
+  buildBackupBar(); // 左下角：导出/导入备份
 
   // 照片较大，统一存入 IndexedDB（文本数据仍在 localStorage）。
   // 先还原照片再渲染，避免图片显示为占位标记；IDB 不可用时退化为直接渲染（仍走 localStorage）。
