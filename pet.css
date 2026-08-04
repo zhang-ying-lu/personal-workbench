@@ -1,0 +1,173 @@
+/* ===================== 宠物之家 pet.css ===================== */
+/* 悬浮陪伴窗 */
+.pet-float {
+  position: fixed;
+  right: 20px;
+  bottom: 18px;
+  z-index: 80;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.pet-avatar {
+  width: 96px;
+  height: 96px;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 6px 10px rgba(61, 42, 23, 0.18));
+  transform-origin: 50% 90%;
+  animation: petBreathe 3.2s ease-in-out infinite;
+}
+.pet-avatar .pet-svg { width: 100%; height: 100%; display: block; }
+.pet-avatar.a-idle { animation: petBreathe 3.2s ease-in-out infinite; }
+.pet-avatar.a-walk { animation: petWalk 2.6s ease-in-out infinite; }
+.pet-avatar.a-sleep { animation: petBreathe 4s ease-in-out infinite; }
+.pet-avatar.a-paw { animation: petPaw 1.1s ease-in-out infinite; }
+.pet-avatar.a-celebrate { animation: petCelebrate 1.2s ease-in-out; }
+.pet-avatar.a-rub { animation: petRub 0.9s ease-in-out; }
+.pet-avatar.a-bounce { animation: petBounce 0.7s ease-in-out; }
+
+@keyframes petBreathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+@keyframes petWalk { 0%,100% { transform: translateX(-16px) rotate(-3deg); } 50% { transform: translateX(16px) rotate(3deg); } }
+@keyframes petPaw { 0%,100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-8px) rotate(-7deg); } 75% { transform: translateX(-8px) rotate(-2deg); } }
+@keyframes petCelebrate { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(200deg) scale(1.12); } 100% { transform: rotate(360deg) scale(1); } }
+@keyframes petRub { 0% { transform: rotate(-8deg); } 25% { transform: rotate(8deg); } 50% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } 100% { transform: rotate(0); } }
+@keyframes petBounce { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-16px); } 70% { transform: translateY(-5px); } }
+
+/* 饰品 / 眼睛 显隐 */
+.pet-acc-scarf, .pet-acc-stars, .pet-crown { display: none; }
+.pet-svg.has-scarf .pet-acc-scarf { display: block; }
+.pet-svg.has-stars .pet-acc-stars { display: block; }
+.pet-svg.is-guardian .pet-crown { display: block; }
+.pet-eyes-closed { display: none; }
+.pet-svg.is-sleep .pet-eyes-open { display: none; }
+.pet-svg.is-sleep .pet-eyes-closed { display: block; }
+.pet-zzz { opacity: 0; transition: .3s; }
+.pet-svg.is-sleep .pet-zzz { opacity: 1; animation: petZzz 2.4s ease-in-out infinite; }
+@keyframes petZzz { 0% { opacity: 0; transform: translateY(4px); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-6px); } }
+
+/* 气泡 + Toast */
+.pet-bubble {
+  pointer-events: auto;
+  max-width: 220px;
+  margin-bottom: 8px;
+  padding: 9px 13px;
+  background: var(--panel);
+  border: 1.5px solid var(--gold-2);
+  border-radius: 14px 14px 4px 14px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.pet-bubble[hidden] { display: none; }
+.pet-bubble::after {
+  content: ""; position: absolute; right: 16px; bottom: -8px;
+  border: 8px solid transparent; border-top-color: var(--gold-2); border-bottom: 0;
+}
+.pet-toast {
+  pointer-events: none;
+  margin-bottom: 8px;
+  padding: 7px 14px;
+  background: linear-gradient(180deg, var(--gold-2), var(--gold));
+  color: #fff8;
+  font-size: 13px; font-weight: 700;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  opacity: 0; transform: translateY(8px) scale(.92);
+  transition: .25s;
+}
+.pet-toast.show { opacity: 1; transform: translateY(0) scale(1); }
+.pet-toast[hidden] { display: none; }
+
+/* ===================== 宠物之家页面 ===================== */
+#view-pet .view-head { margin-bottom: 18px; }
+.pet-stage {
+  position: relative;
+  height: 280px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+.pet-stage-sky { position: absolute; inset: 0; }
+.pet-stage.day .pet-stage-sky { background: linear-gradient(180deg, #fde7c4 0%, #fbd9b0 55%, #f6c98e 100%); }
+.pet-stage.night .pet-stage-sky { background: linear-gradient(180deg, #2b3a63 0%, #3f4f7d 55%, #5b5a82 100%); }
+.pet-stage-ground {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 96px;
+  background: linear-gradient(180deg, rgba(180,140,90,.25), rgba(150,110,70,.45));
+  border-top: 2px solid rgba(255,255,255,.35);
+}
+.pet-stage.day .pet-stage-ground { background: linear-gradient(180deg, #e9c98f, #d9b06f); }
+.pet-stage.night .pet-stage-ground { background: linear-gradient(180deg, #4a4a6e, #34324f); }
+.pet-sun, .pet-moon { position: absolute; top: 18px; font-size: 30px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.15)); }
+.pet-sun { left: 22px; }
+.pet-moon { right: 22px; }
+.pet-big {
+  position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%);
+  width: 190px; height: 190px;
+  cursor: pointer;
+  filter: drop-shadow(0 10px 14px rgba(61,42,23,.22));
+  animation: petBreathe 3.4s ease-in-out infinite;
+}
+.pet-big .pet-svg { width: 100%; height: 100%; }
+.pet-big.pet-rub { animation: petRub 0.9s ease-in-out; }
+.pet-name-tag {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  background: var(--panel); border: 1.5px solid var(--gold-2);
+  color: var(--ink); font-size: 13px; font-weight: 700;
+  padding: 4px 14px; border-radius: 20px; box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+
+/* 状态栏 */
+.pet-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px;
+}
+.pet-stat {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  padding: 14px 16px; box-shadow: 0 4px 14px rgba(61,42,23,.08);
+}
+.pet-stat-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+.pet-stat-head span:first-child { font-size: 13px; color: var(--ink-soft); }
+.pet-stat-val { font-size: 15px; font-weight: 800; color: var(--ink); }
+.pet-bar { height: 12px; border-radius: 8px; background: var(--panel-soft); overflow: hidden; border: 1px solid var(--line); }
+.pet-bar-fill { height: 100%; border-radius: 8px; transition: width .5s ease; }
+.pet-bar-fill.full { background: linear-gradient(90deg, #f6b27a, #e8924f); }
+.pet-bar-fill.love { background: linear-gradient(90deg, #f3a6b0, #d9768a); }
+.pet-stat-sub { margin-top: 8px; font-size: 11.5px; color: var(--ink-soft); }
+.stage-stat .stage-track { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.stage-dot {
+  font-size: 12px; padding: 3px 9px; border-radius: 20px;
+  background: var(--panel-soft); color: var(--ink-soft); border: 1px solid var(--line); white-space: nowrap;
+}
+.stage-dot.done { background: #efe2c4; color: var(--ink-soft); }
+.stage-dot.on { background: linear-gradient(180deg, var(--gold-2), var(--gold)); color: #fff8; border-color: var(--gold); font-weight: 700; }
+.stage-line { flex: 0 0 14px; height: 2px; background: var(--line); }
+
+/* 面板（食物仓） */
+.pet-panel {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  padding: 16px 18px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(61,42,23,.08);
+}
+.pet-panel-title { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+.pet-food-row { display: flex; flex-wrap: wrap; gap: 6px; min-height: 30px; align-items: center; margin-bottom: 12px; }
+.food-dot { font-size: 20px; }
+.food-more { font-size: 13px; color: var(--ink-soft); margin-left: 4px; }
+.food-empty { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+.pet-feed-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pet-feed-hint { font-size: 12px; color: var(--ink-soft); }
+
+.pet-tip {
+  font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;
+  background: rgba(201,162,39,.1); border: 1px dashed var(--gold-3);
+  border-radius: 12px; padding: 10px 14px;
+}
+
+@media (max-width: 720px) {
+  .pet-stats { grid-template-columns: 1fr; }
+  .pet-big { width: 150px; height: 150px; }
+}
