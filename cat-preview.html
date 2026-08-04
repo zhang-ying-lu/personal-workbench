@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>情绪小猫 · 手绘毛绒验证页</title>
+<style>
+  body { margin: 0; font-family: "PingFang SC","Microsoft YaHei",sans-serif; background: #fdf6ec; color: #5b3a1e; padding: 28px; }
+  h1 { font-size: 20px; }
+  .tip { color: #9a6a12; margin-bottom: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 120px); gap: 18px; }
+  .cell { background: #fff; border: 2px solid #ecd9b0; border-radius: 16px; padding: 12px; text-align: center; box-shadow: 0 4px 12px rgba(120,84,8,.12); }
+  .cell svg { display: block; margin: 0 auto 6px; }
+  .label { font-size: 13px; color: #8a5a2b; }
+</style>
+</head>
+<body>
+  <h1>情绪小猫 · 手绘毛绒风</h1>
+  <p class="tip">这是独立验证页，不依赖项目 app.kitty.js。若这里能看到白脸+手绘短线毛绒边+粉耳+情绪色耳朵/腮红的小猫，说明新设计已生效（主页面刷新即可见）。</p>
+  <div class="grid" id="grid"></div>
+
+<script>
+function esc(s){ return String(s); }
+function emoFaceSVG(box, size) {
+    size = size || 40;
+    const icon = (box && (box.icon || box.id || box.emotion)) || "";
+    if (!icon) {
+      const e = (box && box.emoji) || "🙂";
+      return '<span style="font-size:' + Math.round(size * 0.55) + 'px;line-height:1">' + e + '</span>';
+    }
+    const c = esc(box.color || "#f6c453");
+    const ink = "#43301f";
+    const pink = "#ffb7c5";
+    const cx = 24, cy = 26, R = 14.5;
+    function furPath(cx, cy, R, n) {
+      let d = "";
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2;
+        const a1 = a - 0.09;
+        const a2 = a + 0.09;
+        const r1 = R + Math.sin(i * 7.3) * 0.6;
+        const r2 = R + Math.cos(i * 5.1) * 0.6;
+        const x1 = cx + Math.cos(a1) * r1;
+        const y1 = cy + Math.sin(a1) * r1;
+        const x2 = cx + Math.cos(a2) * r2;
+        const y2 = cy + Math.sin(a2) * r2;
+        const mx = cx + Math.cos(a) * (R - 1.4);
+        const my = cy + Math.sin(a) * (R - 1.4);
+        d += "M" + x1.toFixed(1) + " " + y1.toFixed(1) + " Q" + mx.toFixed(1) + " " + my.toFixed(1) + " " + x2.toFixed(1) + " " + y2.toFixed(1) + " ";
+      }
+      return d;
+    }
+    const fur = '<path d="' + furPath(cx, cy, R, 32) + '" fill="none" stroke="' + ink + '" stroke-width="1.5" stroke-linecap="round"/>';
+    const ears =
+      '<path d="M11.5 17.5 L9 3 L22.5 13 Z" fill="' + c + '" stroke="' + ink + '" stroke-width="1.8" stroke-linejoin="round"/>' +
+      '<path d="M36.5 17.5 L39 3 L25.5 13 Z" fill="' + c + '" stroke="' + ink + '" stroke-width="1.8" stroke-linejoin="round"/>' +
+      '<path d="M14 14 L12.5 6.5 L19.5 12.5 Z" fill="' + pink + '"/>' +
+      '<path d="M34 14 L35.5 6.5 L28.5 12.5 Z" fill="' + pink + '"/>' +
+      '<path d="M13.5 10 Q15 13 17.5 13.5" fill="none" stroke="' + ink + '" stroke-width=".9" stroke-linecap="round" opacity=".5"/>' +
+      '<path d="M34.5 10 Q33 13 30.5 13.5" fill="none" stroke="' + ink + '" stroke-width=".9" stroke-linecap="round" opacity=".5"/>';
+    const head = '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="#fff" stroke="' + ink + '" stroke-width="1.6"/>';
+    const brows =
+      '<path d="M14 18 Q17 15 20 18" fill="none" stroke="' + ink + '" stroke-width="1.4" stroke-linecap="round"/>' +
+      '<path d="M28 18 Q31 15 34 18" fill="none" stroke="' + ink + '" stroke-width="1.4" stroke-linecap="round"/>';
+    const blush = '<g fill="' + c + '" opacity=".22"><ellipse cx="13" cy="32" rx="3.6" ry="2.3"/><ellipse cx="35" cy="32" rx="3.6" ry="2.3"/></g>';
+    const nose = '<ellipse cx="24" cy="30.5" rx="1.8" ry="1.3" fill="' + pink + '" stroke="' + ink + '" stroke-width=".9"/>';
+    const mouth = '<path d="M24 32 L24 34 M24 34 L21.5 36 M24 34 L26.5 36" fill="none" stroke="' + ink + '" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>';
+    const whiskers = '<g stroke="' + ink + '" stroke-width="1.1" stroke-linecap="round" opacity=".65">' +
+      '<path d="M9 30 L4 28"/><path d="M9 33 L3.5 33"/>' +
+      '<path d="M39 30 L44 28"/><path d="M39 33 L44.5 33"/></g>';
+    const eye = (ex, r) =>
+      '<circle cx="' + ex + '" cy="27" r="' + r + '" fill="' + ink + '"/>' +
+      '<circle cx="' + (ex - r * 0.35) + '" cy="' + (27 - r * 0.38) + '" r="' + (r * 0.32) + '" fill="#fff"/>';
+    let face = "", cue = "";
+    if (icon === "happy") {
+      face = '<path d="M13 27 Q17 22 21 27" fill="none" stroke="' + ink + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M27 27 Q31 22 35 27" fill="none" stroke="' + ink + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M19 34 Q24 39 29 34" fill="none" stroke="' + ink + '" stroke-width="1.9" stroke-linecap="round"/>';
+    } else if (icon === "sad") {
+      face = eye(17, 3.2) + eye(31, 3.2) +
+        '<path d="M20 36 Q24 33 28 36" fill="none" stroke="' + ink + '" stroke-width="1.8" stroke-linecap="round"/>';
+      cue = '<path d="M12 28 Q9.5 33 12.5 38 Q15.5 33 14 28 Z" fill="#7fb4e8" stroke="' + ink + '" stroke-width="1.1"/>';
+    } else if (icon === "wronged") {
+      face = eye(17, 2.9) + eye(31, 2.9) +
+        '<path d="M13.5 20 L19 23.5" stroke="' + ink + '" stroke-width="1.8" stroke-linecap="round"/>' +
+        '<path d="M34.5 20 L29 23.5" stroke="' + ink + '" stroke-width="1.8" stroke-linecap="round"/>' +
+        '<path d="M21 36 Q24 34 27 36" fill="none" stroke="' + ink + '" stroke-width="1.8" stroke-linecap="round"/>';
+      cue = '<path d="M30 28 Q27.5 33 30.5 38.5 Q33.5 33 32 28 Z" fill="#9bc4ea" stroke="' + ink + '" stroke-width="1.1"/>';
+    } else if (icon === "anxious") {
+      face = eye(17, 3.4) + eye(31, 3.4) +
+        '<path d="M11 18 Q17 15 21 18" fill="none" stroke="' + ink + '" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<path d="M27 18 Q31 15 37 18" fill="none" stroke="' + ink + '" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<path d="M17 36 Q20 33.5 24 36 Q28 33.5 31 36" fill="none" stroke="' + ink + '" stroke-width="1.7" stroke-linecap="round"/>';
+      cue = '<path d="M41 9 Q44 15 41 19 Q38 15 41 9 Z" fill="#7fb4e8" stroke="' + ink + '" stroke-width="1.1"/>';
+    } else if (icon === "tired") {
+      face = '<path d="M13 27 Q17 30.5 21 27" fill="none" stroke="' + ink + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M27 27 Q31 30.5 35 27" fill="none" stroke="' + ink + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<ellipse cx="24" cy="36" rx="2.8" ry="3.2" fill="' + ink + '"/>';
+      cue = '<text x="36" y="15" font-size="9" fill="#88b89a" font-family="serif" font-style="italic">Z</text>';
+    } else if (icon === "lost") {
+      face = '<circle cx="18.5" cy="27" r="1.8" fill="' + ink + '"/><circle cx="29.5" cy="27" r="1.8" fill="' + ink + '"/>' +
+        '<path d="M17 36 Q20 33.5 24 36 Q28 33.5 31 36" fill="none" stroke="' + ink + '" stroke-width="1.7" stroke-linecap="round"/>';
+      cue = '<text x="35" y="15" font-size="12" fill="' + ink + '" font-family="serif" font-style="italic">?</text>';
+    } else {
+      face = eye(17, 3) + eye(31, 3) + mouth;
+    }
+    return '<svg viewBox="0 0 48 48" width="' + size + '" height="' + size + '" aria-hidden="true" style="display:block">' +
+      ears + head + fur + brows + whiskers + blush + nose + face + cue + '</svg>';
+}
+const data = [
+  { id:"happy", label:"😊 开心", color:"#f6c453" },
+  { id:"sad", label:"😢 难过", color:"#6aa9e0" },
+  { id:"wronged", label:"😤 委屈", color:"#b48ad6" },
+  { id:"anxious", label:"😰 焦虑", color:"#f2994a" },
+  { id:"tired", label:"😩 疲惫", color:"#88b89a" },
+  { id:"lost", label:"😶 迷茫", color:"#8fa8c0" }
+];
+const grid = document.getElementById("grid");
+grid.innerHTML = data.map(d => '<div class="cell">' + emoFaceSVG(d, 64) + '<div class="label">' + d.label + '</div></div>').join("");
+</script>
+</body>
+</html>
