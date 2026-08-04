@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>我的变美计划</title>
-  <link rel="stylesheet" href="styles.css?v=20260804g" />
+  <link rel="stylesheet" href="styles.css?v=20260804h" />
   <link rel="stylesheet" href="pet.css?v=20260803x" />
 </head>
 <body>
@@ -786,6 +786,47 @@
           <div class="meals-eval" id="mealEval"></div>
         </div>
 
+        <!-- 运动 & 体型管理：A 力量 / B 有氧 / C 热量看板 -->
+        <div class="daily-block fit-block">
+          <div class="daily-block-head">
+            <span class="daily-block-title">运动 &amp; 体型管理</span>
+          </div>
+          <p class="block-note">记录力量训练与有氧，结合三餐摄入自动算当日热量缺口，对照减脂 / 增肌目标给建议。数据存在你自己的浏览器里。</p>
+
+          <!-- C: 今日热量看板 -->
+          <div class="fit-dash">
+            <div class="fit-profile">
+              <span class="fp-label">体型参数</span>
+              <label>性别<select id="fitGender" class="inp"><option value="女">女</option><option value="男">男</option></select></label>
+              <label>身高<input id="fitHeight" class="inp" type="number" min="0" />cm</label>
+              <label>年龄<input id="fitAge" class="inp" type="number" min="0" /></label>
+              <label>体重<input id="fitWeight" class="inp" type="number" min="0" />kg</label>
+              <label>活动量<select id="fitActivity" class="inp">
+                <option value="sedentary">久坐</option><option value="light">轻度</option>
+                <option value="moderate">中度</option><option value="active">高强度</option>
+              </select></label>
+            </div>
+            <div class="fit-dash-cards">
+              <div class="dash-card"><span class="dc-t">摄入</span><b class="dc-val" id="dashIntake">0</b><span class="dc-u">kcal</span></div>
+              <div class="dash-card"><span class="dc-t">总消耗</span><b class="dc-val" id="dashBurn">0</b><span class="dc-u">kcal</span></div>
+              <div class="dash-card"><span class="dc-t">净平衡</span><b class="dc-val" id="dashNet">0</b><span class="dc-u">kcal</span></div>
+            </div>
+            <div class="fit-dash-advice" id="fitAdvice"></div>
+          </div>
+
+          <!-- A: 力量训练 -->
+          <div class="fit-section">
+            <div class="fit-sec-head"><span>💪 力量训练</span><button class="fit-add-btn" id="addStrength" type="button">+ 添加训练</button></div>
+            <div class="strength-list" id="strengthList"></div>
+          </div>
+
+          <!-- B: 有氧 -->
+          <div class="fit-section">
+            <div class="fit-sec-head"><span>🏃 有氧</span><button class="fit-add-btn" id="addCardio" type="button">+ 添加</button></div>
+            <div class="cardio-list" id="cardioList"></div>
+          </div>
+        </div>
+
         <!-- 跟练内容选择器：从资源库选取 -->
         <div class="modal-mask" id="workoutPickModal" hidden>
           <div class="modal">
@@ -921,8 +962,8 @@
   <script src="models/imagenet_classes.js"></script>
   <script src="foodvision.js"></script>
   <script src="storage.js?v=20260804a"></script>
-  <script src="app.quad2.js?v=20260804j"></script>
+  <script src="app.quad2.js?v=20260804k"></script>
   <script src="pet.js?v=20260803x"></script>
-  <div id="wbVerTag" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.2 monospace;color:#999;background:rgba(255,255,255,.7);padding:2px 6px;border-radius:4px;pointer-events:none;">v20260804j</div>
+  <div id="wbVerTag" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.2 monospace;color:#999;background:rgba(255,255,255,.7);padding:2px 6px;border-radius:4px;pointer-events:none;">v20260804k</div>
 </body>
 </html>
